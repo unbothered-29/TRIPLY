@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link';
+import DestinationCard from './DestinationCard';
 
 
 const Hero = () => {
