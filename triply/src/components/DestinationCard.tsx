@@ -10,9 +10,9 @@ import Link from 'next/link';
   };
 
   export default function DestinationCard({
-name,
-country,
-slug,
+    name,
+    country,
+    slug,
   }:DestinationCardProps){
     return(
     <Link href={`/explore/${slug}`}>
