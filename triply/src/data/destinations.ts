@@ -39,7 +39,7 @@ export const destinations = [
     rating: 4.9,
     temperature: "8°C",
     image:
-      "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65",
+      "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     places: [
       {
         name: "Lake Kawaguchi",
