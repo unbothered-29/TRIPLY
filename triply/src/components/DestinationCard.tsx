@@ -20,7 +20,5 @@ import Link from 'next/link';
         <h3>{name} . {country}</h3>
       </article>
     </Link>
-
-
     );
   }
