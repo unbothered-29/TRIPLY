@@ -17,8 +17,7 @@ slug,
     return(
     <Link href={`/explore/${slug}`}>
       <article>
-        <h3>{name}</h3>
-        <p>{country}</p>
+        <h3>{name} . {country}</h3>
       </article>
     </Link>
 
