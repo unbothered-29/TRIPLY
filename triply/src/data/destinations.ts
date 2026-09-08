@@ -36,7 +36,7 @@ export const destinations = [
     rating: 4.9,
     temperature: "18°C",
     image:
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf",
+      "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dG9reW98ZW58MHx8MHx8fDA%3D",
     places: [
       {
         name: "Shibuya",
@@ -63,7 +63,7 @@ export const destinations = [
     rating: 4.7,
     temperature: "22°C",
     image:
-      "https://images.unsplash.com/photo-1552832230-c0197dd311b5",
+      "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cm9tZXxlbnwwfHwwfHx8MA%3D%3D",
     places: [
       {
         name: "Colosseum",
