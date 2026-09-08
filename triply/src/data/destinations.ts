@@ -1,81 +1,90 @@
 export const destinations = [
   {
-    slug: "goa",
-    name: "Goa",
-    country: "India",
-    tagline: "Beaches, sunsets and unforgettable adventures.",
+    slug: "norway",
+    name: "Norway",
+    country: "Norway",
+    tagline: "Chase the magic of the Northern Lights.",
     description:
-      "Goa is a beautiful coastal destination known for its beaches, Portuguese architecture, vibrant nightlife, delicious food and relaxed atmosphere.",
-    rating: 4.8,
-    temperature: "28°C",
-    image:
-      "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2",
-    places: [
-      {
-        name: "Baga Beach",
-        description: "A popular beach known for its lively atmosphere.",
-      },
-      {
-        name: "Fort Aguada",
-        description: "A historic Portuguese fort overlooking the Arabian Sea.",
-      },
-      {
-        name: "Panaji",
-        description: "The colorful capital city of Goa.",
-      },
-    ],
-  },
-
-  {
-    slug: "tokyo",
-    name: "Tokyo",
-    country: "Japan",
-    tagline: "Where tradition meets the future.",
-    description:
-      "Tokyo combines ancient temples, modern architecture, incredible food, shopping and some of the world's most exciting neighborhoods.",
+      "Norway is a breathtaking destination of dramatic fjords, peaceful villages, snowy landscapes and incredible natural experiences. During the winter months, the Northern Lights create one of the world's most unforgettable sights.",
     rating: 4.9,
-    temperature: "18°C",
+    temperature: "-2°C",
     image:
-      "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dG9reW98ZW58MHx8MHx8fDA%3D",
+      "https://images.unsplash.com/photo-1483347756197-71ef80e95f73",
     places: [
       {
-        name: "Shibuya",
-        description: "One of Tokyo's most energetic and iconic neighborhoods.",
+        name: "Tromsø",
+        description:
+          "A popular Arctic destination and one of the best places to experience the Northern Lights.",
       },
       {
-        name: "Senso-ji",
-        description: "A historic Buddhist temple in Asakusa.",
+        name: "Lofoten Islands",
+        description:
+          "A spectacular group of islands known for dramatic mountains, beaches and traditional fishing villages.",
       },
       {
-        name: "Shinjuku",
-        description: "A vibrant district famous for shopping and nightlife.",
+        name: "Geirangerfjord",
+        description:
+          "A stunning fjord surrounded by towering mountains and cascading waterfalls.",
       },
     ],
   },
 
   {
-    slug: "rome",
-    name: "Rome",
-    country: "Italy",
-    tagline: "Walk through thousands of years of history.",
+    slug: "mount-fuji",
+    name: "Mount Fuji",
+    country: "Japan",
+    tagline: "Stand beneath Japan's most iconic mountain.",
     description:
-      "Rome is a city filled with ancient ruins, Renaissance art, incredible architecture and some of the best food in Italy.",
-    rating: 4.7,
-    temperature: "22°C",
+      "Mount Fuji is Japan's most recognizable natural landmark. Surrounded by lakes, forests and traditional towns, the mountain offers incredible views and unforgettable experiences throughout the year.",
+    rating: 4.9,
+    temperature: "8°C",
     image:
-      "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cm9tZXxlbnwwfHwwfHx8MA%3D%3D",
+      "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65",
     places: [
       {
-        name: "Colosseum",
-        description: "One of the most famous ancient landmarks in the world.",
+        name: "Lake Kawaguchi",
+        description:
+          "A beautiful lake offering spectacular views of Mount Fuji, especially during sunrise.",
       },
       {
-        name: "Trevi Fountain",
-        description: "A spectacular Baroque fountain in central Rome.",
+        name: "Chureito Pagoda",
+        description:
+          "A famous five-story pagoda overlooking Mount Fuji and the surrounding landscape.",
       },
       {
-        name: "Vatican City",
-        description: "Home to St. Peter's Basilica and the Vatican Museums.",
+        name: "Fuji Five Lakes",
+        description:
+          "A collection of scenic lakes located around the base of Mount Fuji.",
+      },
+    ],
+  },
+
+  {
+    slug: "paris",
+    name: "Paris",
+    country: "France",
+    tagline: "Fall in love with the city of lights.",
+    description:
+      "Paris is a timeless destination filled with beautiful architecture, world-famous landmarks, charming streets, incredible food and unforgettable cultural experiences.",
+    rating: 4.8,
+    temperature: "14°C",
+    image:
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
+    places: [
+      {
+        name: "Eiffel Tower",
+        description:
+          "Paris's most iconic landmark, offering spectacular views across the city.",
+      },
+      {
+        name: "Louvre Museum",
+        description:
+          "One of the world's largest and most famous museums, home to countless works of art.",
+      },
+      {
+        name: "Montmartre",
+        description:
+          "A charming historic neighborhood known for its artistic atmosphere and beautiful views.",
       },
     ],
   },

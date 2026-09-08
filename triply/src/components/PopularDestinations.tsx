@@ -2,19 +2,19 @@ import DestinationCard from "./DestinationCard";
 
 const destinations = [
   {
-    name: "Tokyo",
+    name: "Norway",
+    country: "Norway",
+    slug: "norway",
+  },
+  {
+    name: "Mount-Fuji",
     country: "Japan",
-    slug: "tokyo",
+    slug: "mount-fuji",
   },
   {
-    name: "Rome",
-    country: "Italy",
-    slug: "rome",
-  },
-  {
-    name: "Goa",
-    country: "India",
-    slug: "goa",
+    name: "Paris",
+    country: "France",
+    slug: "paris",
   },
 ];
 
