@@ -1,6 +1,7 @@
 import { destinations } from "@/data/destinations";
 import DestinationHero from "@/components/DestinationHero";
 import PopularPlaces from "@/components/PopularPlaces";
+import { notFound } from "next/navigation";
 
 export default async function DestinationPage({
   params,
@@ -14,14 +15,8 @@ export default async function DestinationPage({
   );
 
   if (!destination) {
-    return (
-      <main className="flex min-h-[60vh] items-center justify-center px-6">
-        <h1 className="text-3xl font-light text-gray-500">
-          Destination not found
-        </h1>
-      </main>
-    );
-  }
+        notFound();
+       }
 
   return (
     <main>
