@@ -3,6 +3,7 @@ import Link from "next/link";
 export default function CTA() {
   return (
     <section className="px-6 py-24 md:px-12 lg:px-24">
+
       <div className="mx-auto max-w-7xl rounded-3xl bg-gray-100 px-8 py-20 text-center md:px-16">
 
         <p className="text-sm font-medium uppercase tracking-[0.3em] text-gray-700">
