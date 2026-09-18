@@ -6,7 +6,7 @@ export default function NotFound(){
                     404
                 </p>
                 <h1 className="mt-4 text-5xl font-light tracking-tight">
-                   ❌ Destination not found
+                   ❌ Destination not found.
                 </h1>
                 <p className="mt-4 text-gray-500">
                     Sorry,we couldnt find the destination youre looking for.
