@@ -9,7 +9,7 @@ export default function NotFound(){
                    ❌ Destination not found.
                 </h1>
                 <p className="mt-4 text-gray-500">
-                    Sorry, we couldnt find the destination youre looking for.
+                    Sorry,we couldnt find the destination youre looking for.
                 </p>
             </section>
         </main>
