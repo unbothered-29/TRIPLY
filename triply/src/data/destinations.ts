@@ -28,14 +28,14 @@ export const destinations = [
         description:
           "A spectacular group of islands known for dramatic mountains, beaches and traditional fishing villages.",
         image:
-          "https://images.unsplash.com/photo-1500534623283-312aade485b7",
+          "https://images.unsplash.com/photo-1710762635726-531b4a22d4ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
       {
         name: "Geirangerfjord",
         description:
           "A stunning fjord surrounded by towering mountains and cascading waterfalls.",
         image:
-          "https://images.unsplash.com/photo-1520769669658-f07657c5f700",
+          "https://images.unsplash.com/photo-1664825381616-5cb8397fd9b1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
     ],
   },
@@ -62,7 +62,7 @@ export const destinations = [
         description:
           "A beautiful lake offering spectacular views of Mount Fuji, especially during sunrise.",
         image:
-          "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65",
+          "https://images.unsplash.com/photo-1620635066057-b304ba97bc6e?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
       {
         name: "Chureito Pagoda",
