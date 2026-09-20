@@ -7,9 +7,8 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="absolute left-0 right-0 top-0 z-50">
+    <header className="fixed left-0 right-0 top-0 z-50">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 md:px-10 lg:px-12">
-        
         {/* Logo */}
         <Link
           href="/"
@@ -41,6 +40,13 @@ export default function Navbar() {
           </Link>
 
           <Link
+            href="/plan"
+            className="relative text-sm text-white/60 transition hover:text-white"
+          >
+            Plan
+          </Link>
+
+          <Link
             href="/about"
             className="relative text-sm text-white/60 transition hover:text-white"
           >
@@ -51,10 +57,14 @@ export default function Navbar() {
         {/* Desktop CTA */}
         <div className="hidden md:block">
           <Link
-            href="/explore"
-            className="rounded-full border border-white/20 bg-white px-5 py-2.5 text-sm font-medium text-black transition duration-300 hover:bg-white/80"
+            href="/plan"
+            className="group flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.06] px-5 py-2.5 text-sm text-white backdrop-blur-md transition duration-300 hover:border-white/30 hover:bg-white hover:text-black"
           >
-            Start exploring →
+            <span>Plan a trip</span>
+
+            <span className="transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
           </Link>
         </div>
 
@@ -102,6 +112,14 @@ export default function Navbar() {
             </Link>
 
             <Link
+              href="/plan"
+              onClick={() => setMenuOpen(false)}
+              className="text-lg text-white/70 transition hover:text-white"
+            >
+              Plan
+            </Link>
+
+            <Link
               href="/about"
               onClick={() => setMenuOpen(false)}
               className="text-lg text-white/70 transition hover:text-white"
@@ -110,11 +128,11 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/explore"
+              href="/plan"
               onClick={() => setMenuOpen(false)}
               className="mt-2 rounded-full bg-white px-5 py-3 text-center text-sm font-medium text-black"
             >
-              Start exploring →
+              Plan a trip →
             </Link>
           </div>
         </div>

@@ -26,10 +26,10 @@ export default function CTA() {
           </p>
           <div className="mt-10">
             <Link
-              href="/explore"
+              href="/plan"
               className="inline-block rounded-full bg-white px-8 py-4 text-lg font-medium text-black transition duration-300 hover:bg-gray-200"
             >
-              Explore destinations →
+              Plan a Trip →
             </Link>
           </div>
         </div>
