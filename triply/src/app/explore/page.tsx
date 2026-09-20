@@ -7,10 +7,18 @@ import { destinations } from "@/data/destinations";
 
 export default function ExplorePage() {
   const [search, setSearch] = useState(""); 
+  const [category, setCategory] = useState("All");
 
-  const filteredDestinations=destinations.filter((destination)=>
-    destination.name.toLowerCase().includes(search.toLowerCase())
-   );
+ const filteredDestinations = destinations.filter((destination) => {
+  const matchesSearch = destination.name
+    .toLowerCase()
+    .includes(search.toLowerCase());
+
+  const matchesCategory =
+    category === "All" || destination.category === category;
+
+  return matchesSearch && matchesCategory;
+});
 
   return (
     <main className="px-6 py-20 md:px-12 lg:px-24">
@@ -34,6 +42,24 @@ export default function ExplorePage() {
    onChange={(e)=>setSearch(e.target.value)}
    className="w-full rounded-full border border-gray-200 px-6 py-4 outline-none trasition focus:border-black"
    />
+</div>
+
+<div className="mt-6 flex flex-wrap gap-3">
+  {["All", "Nature", "Mountains", "Cities", "Coastal"].map(
+    (filter) => (
+      <button
+        key={filter}
+        onClick={() => setCategory(filter)}
+        className={`rounded-full border px-5 py-2.5 text-sm transition ${
+          category === filter
+            ? "border-black bg-black text-white"
+            : "border-gray-200 text-gray-500 hover:border-black hover:text-black"
+        }`}
+      >
+        {filter}
+      </button>
+    )
+  )}
 </div>
 
 <div className="mt-16 grid gap-6 md:grid-cols-3">
