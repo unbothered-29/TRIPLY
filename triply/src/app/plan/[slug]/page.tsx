@@ -50,6 +50,49 @@ const itineraries: Record<string, ItineraryDay[]> = {
   ],
 };
 
+function createItinerary(
+  destination: (typeof destinations)[number]
+): ItineraryDay[] {
+  const places = destination.places;
+
+  return [
+    {
+      day: 1,
+      title: `Arrive in ${destination.name}`,
+      description: `Settle into ${destination.name}, take your time getting familiar with the surroundings, and enjoy a relaxed first day.`,
+      places: [places[0].name],
+    },
+    {
+      day: 2,
+      title: `Discover ${places[0].name}`,
+      description: `Spend the day exploring ${places[0].name} and experiencing one of the highlights of ${destination.name}.`,
+      places: [places[0].name],
+    },
+    {
+      day: 3,
+      title: `Explore ${places[1].name}`,
+      description: `Continue your journey with a visit to ${places[1].name}, taking time to experience the landscape, culture, and atmosphere.`,
+      places: [places[1].name],
+    },
+    {
+      day: 4,
+      title: `A day around ${places[2].name}`,
+      description: `Slow down and discover ${places[2].name}, one of the memorable places worth experiencing during your journey.`,
+      places: [places[2].name],
+    },
+    {
+      day: 5,
+      title: `One last day in ${destination.name}`,
+      description: `Spend your final day revisiting a favorite place, discovering something new, and enjoying your last moments in ${destination.name}.`,
+      places: [
+        places[0].name,
+        places[1].name,
+        places[2].name,
+      ],
+    },
+  ];
+}
+
 export default async function ItineraryPage({
   params,
 }: {
@@ -65,36 +108,8 @@ export default async function ItineraryPage({
     notFound();
   }
 
-  const itinerary = itineraries[slug];
-
-  if (!itinerary) {
-    return (
-      <main className="min-h-screen bg-black px-6 pb-24 pt-32 text-white md:px-12 lg:px-24">
-        <div className="mx-auto max-w-4xl">
-          <Link
-            href="/plan"
-            className="text-xs uppercase tracking-[0.25em] text-white/40 transition hover:text-white"
-          >
-            ← Back to planner
-          </Link>
-
-          <div className="mt-20">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-white/30">
-              Itinerary
-            </p>
-
-            <h1 className="mt-6 text-6xl font-light tracking-tight">
-              {destination.name}
-            </h1>
-
-            <p className="mt-6 max-w-xl text-white/40">
-              Your itinerary for this destination is coming soon.
-            </p>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  const itinerary =
+    itineraries[slug] ?? createItinerary(destination);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -102,11 +117,11 @@ export default async function ItineraryPage({
       <section className="px-4 pb-16 pt-28 md:px-8 md:pt-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <Link
-            href="/plan"
+            href={`/explore/${destination.slug}`}
             className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/30 transition hover:text-white"
           >
             <span>←</span>
-            Back to planner
+            Back to {destination.name}
           </Link>
 
           <div className="mt-8 grid overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] lg:grid-cols-[1.1fr_0.9fr]">
@@ -117,7 +132,7 @@ export default async function ItineraryPage({
                 alt={`${destination.name}, ${destination.country}`}
                 fill
                 priority
-                className="object-cover"
+                className="object-cover transition duration-1000 hover:scale-105"
               />
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
@@ -173,6 +188,18 @@ export default async function ItineraryPage({
                   </span>
                 </div>
               </div>
+
+              {/* Plan CTA */}
+              <Link
+                href="/plan"
+                className="group mt-8 flex w-fit items-center gap-4 rounded-full bg-white px-6 py-3.5 text-sm font-medium text-black transition duration-300 hover:bg-white/80"
+              >
+                <span>Plan your trip</span>
+
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
             </div>
           </div>
         </div>
@@ -193,6 +220,12 @@ export default async function ItineraryPage({
             <h2 className="mt-6 text-4xl font-light tracking-tight md:text-5xl">
               Your days in {destination.name}.
             </h2>
+
+            <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-white/35">
+              A simple five-day route designed to help you
+              experience the highlights while leaving room to
+              explore at your own pace.
+            </p>
           </div>
 
           <div className="divide-y divide-white/10">
@@ -201,7 +234,7 @@ export default async function ItineraryPage({
                 key={day.day}
                 className="grid gap-8 py-10 md:grid-cols-[100px_1fr]"
               >
-                {/* Day */}
+                {/* Day number */}
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
                     Day
@@ -212,7 +245,7 @@ export default async function ItineraryPage({
                   </p>
                 </div>
 
-                {/* Content */}
+                {/* Day content */}
                 <div>
                   <h3 className="text-2xl font-light md:text-3xl">
                     {day.title}
@@ -239,7 +272,7 @@ export default async function ItineraryPage({
         </div>
       </section>
 
-      {/* Closing */}
+      {/* Closing CTA */}
       <section className="border-t border-white/10 px-6 py-24 md:px-12 lg:px-24">
         <div className="mx-auto max-w-5xl text-center">
           <p className="text-[10px] uppercase tracking-[0.4em] text-white/25">
@@ -248,19 +281,34 @@ export default async function ItineraryPage({
 
           <h2 className="mx-auto mt-6 max-w-2xl text-4xl font-light leading-tight md:text-6xl">
             Make memories worth{" "}
-            <span className="text-white/30">remembering.</span>
+            <span className="text-white/30">
+              remembering.
+            </span>
           </h2>
 
-          <Link
-            href={`/explore/${destination.slug}`}
-            className="group mt-10 inline-flex items-center gap-4 rounded-full border border-white/15 px-7 py-3.5 text-sm text-white transition duration-300 hover:border-white hover:bg-white hover:text-black"
-          >
-            Explore {destination.name}
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/plan"
+              className="group inline-flex items-center gap-4 rounded-full bg-white px-7 py-3.5 text-sm font-medium text-black transition duration-300 hover:bg-white/80"
+            >
+              Plan your trip
 
-            <span className="transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+
+            <Link
+              href={`/explore/${destination.slug}`}
+              className="group inline-flex items-center gap-4 rounded-full border border-white/15 px-7 py-3.5 text-sm text-white transition duration-300 hover:border-white hover:bg-white hover:text-black"
+            >
+              Explore {destination.name}
+
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
     </main>

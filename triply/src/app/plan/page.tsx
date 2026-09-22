@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { destinations } from "@/data/destinations";
 
 export default function PlanPage() {
+  const router = useRouter();
+
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -27,12 +30,16 @@ export default function PlanPage() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    console.log({
-      destination,
-      startDate,
-      endDate,
-      interests,
-    });
+    const params = new URLSearchParams();
+
+    params.set("startDate", startDate);
+    params.set("endDate", endDate);
+
+    if (interests.length > 0) {
+      params.set("interests", interests.join(","));
+    }
+
+    router.push(`/plan/${destination}?${params.toString()}`);
   }
 
   return (
@@ -51,7 +58,9 @@ export default function PlanPage() {
           <h1 className="mt-8 text-5xl font-light leading-[0.95] tracking-[-0.04em] md:text-7xl">
             Plan your
             <br />
-            <span className="text-white/30">next journey.</span>
+            <span className="text-white/30">
+              next journey.
+            </span>
           </h1>
 
           <p className="mt-6 max-w-lg text-sm font-light leading-relaxed text-white/40 md:text-base">
@@ -60,7 +69,7 @@ export default function PlanPage() {
           </p>
         </div>
 
-        {/* Planner */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-10">
           {/* Destination */}
           <div>
@@ -78,7 +87,11 @@ export default function PlanPage() {
               className="mt-4 w-full appearance-none rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-5 text-base text-white outline-none transition focus:border-white/30"
               required
             >
-              <option value="" disabled className="bg-black">
+              <option
+                value=""
+                disabled
+                className="bg-black"
+              >
                 Choose a destination
               </option>
 
@@ -101,6 +114,7 @@ export default function PlanPage() {
             </label>
 
             <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {/* Start date */}
               <div>
                 <label
                   htmlFor="start-date"
@@ -113,12 +127,15 @@ export default function PlanPage() {
                   id="start-date"
                   type="date"
                   value={startDate}
-                  onChange={(event) => setStartDate(event.target.value)}
+                  onChange={(event) =>
+                    setStartDate(event.target.value)
+                  }
                   className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-5 text-sm text-white outline-none transition focus:border-white/30"
                   required
                 />
               </div>
 
+              {/* End date */}
               <div>
                 <label
                   htmlFor="end-date"
@@ -131,7 +148,10 @@ export default function PlanPage() {
                   id="end-date"
                   type="date"
                   value={endDate}
-                  onChange={(event) => setEndDate(event.target.value)}
+                  min={startDate || undefined}
+                  onChange={(event) =>
+                    setEndDate(event.target.value)
+                  }
                   className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-5 text-sm text-white outline-none transition focus:border-white/30"
                   required
                 />
@@ -173,7 +193,7 @@ export default function PlanPage() {
               type="submit"
               className="group flex items-center gap-4 rounded-full bg-white px-7 py-4 text-sm font-medium text-black transition duration-300 hover:bg-white/80"
             >
-              <span>Create my trip</span>
+              <span>Generate itinerary</span>
 
               <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →

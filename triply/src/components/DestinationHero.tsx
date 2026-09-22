@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import SaveButton from "@/components/SaveButton";
 
 type DestinationHeroProps = {
@@ -19,6 +20,7 @@ export default function DestinationHero({
   return (
     <section className="px-4 pb-12 pt-28 md:px-8 md:pb-16 md:pt-32 lg:px-16">
       <div className="mx-auto max-w-7xl">
+        {/* Section label */}
         <div className="mb-6 flex items-center justify-between px-2">
           <div className="flex items-center gap-3">
             <span className="h-px w-8 bg-white/30" />
@@ -33,8 +35,8 @@ export default function DestinationHero({
           </p>
         </div>
 
+        {/* Hero */}
         <div className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02]">
-          {/* Image */}
           <div className="relative h-[620px] md:h-[720px] lg:h-[760px]">
             <Image
               src={destination.image}
@@ -44,16 +46,13 @@ export default function DestinationHero({
               className="object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.03]"
             />
 
-            {/* Overall image tint */}
+            {/* Image overlay */}
             <div className="absolute inset-0 bg-black/20" />
 
-            {/* Top fade */}
             <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/50 to-transparent" />
 
-            {/* Bottom cinematic gradient */}
             <div className="absolute inset-x-0 bottom-0 h-[75%] bg-gradient-to-t from-black via-black/70 to-transparent" />
 
-            {/* Subtle side vignette */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,transparent_0%,rgba(0,0,0,0.18)_100%)]" />
 
             {/* Content */}
@@ -68,7 +67,7 @@ export default function DestinationHero({
                   </p>
                 </div>
 
-                {/* Title */}
+                {/* Destination name */}
                 <h1 className="mt-5 max-w-5xl text-6xl font-light leading-[0.9] tracking-[-0.05em] text-white md:text-8xl lg:text-[9rem]">
                   {destination.name}
                 </h1>
@@ -83,7 +82,7 @@ export default function DestinationHero({
                   {destination.description}
                 </p>
 
-                {/* Bottom information */}
+                {/* Details + actions */}
                 <div className="mt-8 flex flex-wrap items-center gap-3">
                   {/* Rating */}
                   <div className="flex items-center gap-3 rounded-full border border-white/15 bg-black/20 px-5 py-3 backdrop-blur-xl">
@@ -117,11 +116,23 @@ export default function DestinationHero({
 
                   {/* Save */}
                   <SaveButton />
+
+                  {/* Plan your trip */}
+                  <Link
+                    href="/plan"
+                    className="group/plan flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition duration-300 hover:bg-white/80"
+                  >
+                    <span>Plan your trip</span>
+
+                    <span className="transition-transform duration-300 group-hover/plan:translate-x-1">
+                      →
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>
 
-            {/* Image index / decorative detail */}
+            {/* Explore badge */}
             <div className="absolute right-7 top-7 hidden md:block">
               <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/20 px-4 py-2 backdrop-blur-xl">
                 <span className="h-1.5 w-1.5 rounded-full bg-white/70" />
