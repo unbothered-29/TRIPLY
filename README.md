@@ -1,4 +1,3 @@
-```markdown
 # Triply
 
 Triply is a travel discovery and trip-planning web app built with Next.js. Explore curated destinations from around the world, dive into detailed guides for each one, and sketch out a trip plan based on your dates and interests.
@@ -22,20 +21,18 @@ Triply is a travel discovery and trip-planning web app built with Next.js. Explo
 
 ## Project Structure
 
-```
-src/
-├── app/
-│   ├── page.tsx              # Home page
-│   ├── about/                # About page
-│   ├── explore/               # Explore + search/filter destinations
-│   │   └── [slug]/            # Individual destination detail page
-│   └── plan/                  # Trip planner form
-│       └── [slug]/            # Generated trip plan page
-├── components/                # Navbar, Hero, Footer, DestinationCard, etc.
-│   └── ui/                    # Reusable UI primitives (e.g. Globe)
-└── data/
-    └── destinations.ts        # Destination data (name, country, images, places, etc.)
-```
+    src/
+    ├── app/
+    │   ├── page.tsx              # Home page
+    │   ├── about/                # About page
+    │   ├── explore/               # Explore + search/filter destinations
+    │   │   └── [slug]/            # Individual destination detail page
+    │   └── plan/                  # Trip planner form
+    │       └── [slug]/            # Generated trip plan page
+    ├── components/                # Navbar, Hero, Footer, DestinationCard, etc.
+    │   └── ui/                    # Reusable UI primitives (e.g. Globe)
+    └── data/
+        └── destinations.ts        # Destination data (name, country, images, places, etc.)
 
 ## Getting Started
 
@@ -72,4 +69,3 @@ npm run lint    # Run ESLint
 ## License
 
 This project is currently unlicensed / for personal/portfolio use.
-```
