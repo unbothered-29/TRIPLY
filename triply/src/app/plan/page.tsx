@@ -193,7 +193,7 @@ export default function PlanPage() {
               type="submit"
               className="group flex items-center gap-4 rounded-full bg-white px-7 py-4 text-sm font-medium text-black transition duration-300 hover:bg-white/80"
             >
-              <span>Generate itin</span>
+              <span>Generate iti</span>
 
               <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →
