@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useState, useEffect } from "react";
 import {
   toggleSaved,
   subscribeSaved,
@@ -15,13 +15,19 @@ interface SaveButtonProps {
 }
 
 export default function SaveButton({ slug, className }: SaveButtonProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const savedSlugs = useSyncExternalStore(
     subscribeSaved,
     getSavedSnapshot,
     getSavedServerSnapshot
   );
 
-  const saved = slug ? savedSlugs.includes(slug) : false;
+  const saved = mounted && slug ? savedSlugs.includes(slug) : false;
 
   const handleToggle = () => {
     if (slug) {

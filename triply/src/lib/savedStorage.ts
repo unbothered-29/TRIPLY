@@ -64,10 +64,11 @@ export function getSavedSlugs(): string[] {
 }
 
 let cachedTrips: SavedTripItem[] = [];
+let cachedSlugs: string[] = [];
 let cachedRaw: string | null = null;
 
-export function getSavedSnapshot(): string[] {
-  if (typeof window === "undefined") return [];
+function refreshCacheIfNeeded(): void {
+  if (typeof window === "undefined") return;
   const raw = localStorage.getItem(SAVED_STORAGE_KEY) || "[]";
   if (raw !== cachedRaw) {
     cachedRaw = raw;
@@ -83,28 +84,19 @@ export function getSavedSnapshot(): string[] {
     } catch {
       cachedTrips = [];
     }
+    cachedSlugs = cachedTrips.map((t) => t.slug);
   }
-  return cachedTrips.map((t) => t.slug);
+}
+
+export function getSavedSnapshot(): string[] {
+  if (typeof window === "undefined") return SERVER_SNAPSHOT;
+  refreshCacheIfNeeded();
+  return cachedSlugs;
 }
 
 export function getSavedTripsSnapshot(): SavedTripItem[] {
-  if (typeof window === "undefined") return [];
-  const raw = localStorage.getItem(SAVED_STORAGE_KEY) || "[]";
-  if (raw !== cachedRaw) {
-    cachedRaw = raw;
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        cachedTrips = parsed
-          .map(normalizeRawItem)
-          .filter((t): t is SavedTripItem => t !== null);
-      } else {
-        cachedTrips = [];
-      }
-    } catch {
-      cachedTrips = [];
-    }
-  }
+  if (typeof window === "undefined") return SERVER_TRIPS_SNAPSHOT;
+  refreshCacheIfNeeded();
   return cachedTrips;
 }
 

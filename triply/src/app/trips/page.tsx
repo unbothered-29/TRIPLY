@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { destinations } from "@/data/destinations";
@@ -55,16 +55,23 @@ const CURATED_JOURNEYS = [
 ];
 
 export default function TripsPage() {
+  const [mounted, setMounted] = useState(false);
   const [currencyCode, setCurrencyCode] = useState("USD");
   const [globalStyle, setGlobalStyle] = useState<TravelStyle>("comfort");
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [filterPriority, setFilterPriority] = useState<"all" | TripPriority>("all");
 
-  const savedTrips = useSyncExternalStore(
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const rawSavedTrips = useSyncExternalStore(
     subscribeSaved,
     getSavedTripsSnapshot,
     getSavedTripsServerSnapshot
   );
+
+  const savedTrips = mounted ? rawSavedTrips : [];
 
   const activeCurrency =
     SUPPORTED_CURRENCIES.find((c) => c.code === currencyCode) || SUPPORTED_CURRENCIES[0];
