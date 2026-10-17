@@ -1,105 +1,107 @@
 import Link from "next/link";
+import Reveal from "@/components/ui/Reveal";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[radial-gradient(circle_at_50%_0%,#303030_0%,#181818_40%,#080808_100%)] text-white">
+    <footer className="border-t border-white/10 bg-[radial-gradient(circle_at_50%_0%,#202020_0%,#101010_40%,#050505_100%)] text-white overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 py-24 md:px-12 lg:px-24">
-        <div className="grid gap-16 md:grid-cols-[1.5fr_1fr]">
-          {/* Main CTA */}
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.4em] text-white/30">
-              Somewhere out there
-            </p>
-
-            <h2 className="mt-8 max-w-3xl text-5xl font-light leading-[0.95] tracking-[-0.04em] md:text-7xl">
-              Your next
-              <br />
-              <span className="text-white/30">
-                adventure awaits.
-              </span>
-            </h2>
-
-            <p className="mt-8 max-w-md text-sm font-light leading-relaxed text-white/40 md:text-base">
-              The world is bigger than the places you've already
-              seen. Discover somewhere new, find your inspiration,
-              and start planning your next journey.
-            </p>
-
-            <Link
-              href="/plan"
-              className="group mt-10 inline-flex items-center gap-4 rounded-full border border-white/20 px-7 py-3.5 text-sm text-white transition duration-300 hover:border-white hover:bg-white hover:text-black"
-            >
-              Plan a trip
-
-              <span className="transition-transform duration-300 group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-          </div>
-
-          {/* Navigation */}
-          <div className="grid grid-cols-2 gap-10 md:pt-2">
-            {/* Explore */}
+        <Reveal>
+          <div className="grid gap-16 md:grid-cols-[1.5fr_1fr]">
+            {/* Main CTA */}
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
-                Explore
+              <p className="text-xs font-medium uppercase tracking-[0.4em] text-white/30">
+                Somewhere out there
               </p>
 
-              <div className="mt-6 flex flex-col gap-4">
-                <Link
-                  href="/"
-                  className="text-sm text-white/50 transition hover:text-white"
-                >
-                  Home
-                </Link>
+              <h2 className="mt-8 max-w-3xl text-5xl font-light leading-[0.95] tracking-[-0.04em] md:text-7xl">
+                Your next
+                <br />
+                <span className="bg-gradient-to-r from-white via-white/80 to-white/30 bg-clip-text text-transparent">
+                  adventure awaits.
+                </span>
+              </h2>
 
-                <Link
-                  href="/explore"
-                  className="text-sm text-white/50 transition hover:text-white"
-                >
-                  Destinations
-                </Link>
-
-                <Link
-                  href="/plan"
-                  className="text-sm text-white/50 transition hover:text-white"
-                >
-                  Plan a trip
-                </Link>
-
-                <Link
-                  href="/about"
-                  className="text-sm text-white/50 transition hover:text-white"
-                >
-                  About Triply
-                </Link>
-              </div>
-            </div>
-
-            {/* Triply */}
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
-                Triply
+              <p className="mt-8 max-w-md text-sm font-light leading-relaxed text-white/40 md:text-base">
+                The world is bigger than the places you&apos;ve already
+                seen. Discover somewhere new, find your inspiration,
+                and start planning your next journey.
               </p>
 
-              <div className="mt-6 flex flex-col gap-4">
-                <Link
-                  href="/explore"
-                  className="text-sm text-white/50 transition hover:text-white"
-                >
-                  Discover
-                </Link>
+              <Link
+                href="/plan"
+                className="group mt-10 inline-flex items-center gap-4 rounded-full border border-white/20 bg-white/[0.04] px-7 py-3.5 text-sm text-white backdrop-blur-md transition-all duration-300 hover:border-white hover:bg-white hover:text-black hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] active:scale-95"
+              >
+                <span>Plan a trip</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1.5">
+                  →
+                </span>
+              </Link>
+            </div>
 
-                <Link
-                  href="/about"
-                  className="text-sm text-white/50 transition hover:text-white"
-                >
-                  Our story
-                </Link>
+            {/* Navigation */}
+            <div className="grid grid-cols-2 gap-10 md:pt-2">
+              {/* Explore */}
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
+                  Explore
+                </p>
+
+                <div className="mt-6 flex flex-col gap-4">
+                  <Link
+                    href="/"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    Home
+                  </Link>
+
+                  <Link
+                    href="/explore"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    Destinations
+                  </Link>
+
+                  <Link
+                    href="/plan"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    Plan a trip
+                  </Link>
+
+                  <Link
+                    href="/about"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    About Triply
+                  </Link>
+                </div>
+              </div>
+
+              {/* Triply */}
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
+                  Triply
+                </p>
+
+                <div className="mt-6 flex flex-col gap-4">
+                  <Link
+                    href="/explore"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    Discover
+                  </Link>
+
+                  <Link
+                    href="/about"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    Our story
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Bottom */}
         <div className="mt-24 border-t border-white/10 pt-8">
@@ -107,10 +109,10 @@ export default function Footer() {
             {/* Logo */}
             <Link
               href="/"
-              className="group flex items-center gap-3"
+              className="group flex items-center gap-3 transition-transform duration-300 hover:scale-102"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 transition duration-300 group-hover:bg-white group-hover:text-black">
-                <span className="text-sm">✦</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                <span className="text-sm transition-transform duration-300 group-hover:rotate-45">✦</span>
               </div>
 
               <span className="text-xl font-medium tracking-tight">

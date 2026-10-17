@@ -87,9 +87,23 @@ export default function Globe({
       return inside;
     };
 
+    interface GeoFeature {
+      type?: string;
+      geometry: {
+        type: string;
+        coordinates: number[][][] | number[][][][];
+      };
+      [key: string]: unknown;
+    }
+
+    interface LandCollection {
+      type: string;
+      features: GeoFeature[];
+    }
+
     const pointInFeature = (
       point: [number, number],
-      feature: any
+      feature: GeoFeature
     ): boolean => {
       const geometry = feature.geometry;
 
@@ -134,7 +148,7 @@ export default function Globe({
     };
 
     const generateDotsInPolygon = (
-      feature: any,
+      feature: GeoFeature,
       dotSpacing = 16
     ) => {
       const dots: [number, number][] = [];
@@ -176,7 +190,7 @@ export default function Globe({
 
     const allDots: DotData[] = [];
 
-    let landFeatures: any = null;
+    let landFeatures: LandCollection | null = null;
 
     const render = () => {
       context.clearRect(
@@ -234,9 +248,9 @@ export default function Globe({
        */
       context.beginPath();
 
-      landFeatures.features.forEach(
-        (feature: any) => {
-          path(feature);
+      landFeatures?.features.forEach(
+        (feature: GeoFeature) => {
+          path(feature as unknown as d3.GeoPermissibleObjects);
         }
       );
 
@@ -298,8 +312,8 @@ export default function Globe({
 
         landFeatures = await response.json();
 
-        landFeatures.features.forEach(
-          (feature: any) => {
+        landFeatures?.features.forEach(
+          (feature: GeoFeature) => {
             const dots = generateDotsInPolygon(
               feature,
               16
