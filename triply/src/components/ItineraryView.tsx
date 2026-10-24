@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { GeneratedItinerary } from "@/lib/itineraryGenerator";
 import Reveal from "@/components/ui/Reveal";
+import TripBudgetCalculator from "@/components/TripBudgetCalculator";
+import { showToast } from "@/components/ui/Toast";
 
 interface ItineraryViewProps {
   itinerary: GeneratedItinerary;
@@ -16,13 +18,23 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
   const [selectedDay, setSelectedDay] = useState<number | "all">("all");
   const [completedActivities, setCompletedActivities] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"itinerary" | "tips">("itinerary");
+  const [activeTab, setActiveTab] = useState<"itinerary" | "budget" | "tips">("itinerary");
 
   const toggleActivity = (key: string) => {
-    setCompletedActivities((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setCompletedActivities((prev) => {
+      const next = !prev[key];
+      if (next) {
+        showToast({
+          title: "Activity checked off!",
+          description: "Trip itinerary progress updated.",
+          type: "success",
+        });
+      }
+      return {
+        ...prev,
+        [key]: next,
+      };
+    });
   };
 
   const handleShare = async () => {
@@ -30,6 +42,11 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
       if (typeof window !== "undefined") {
         await navigator.clipboard.writeText(window.location.href);
         setCopied(true);
+        showToast({
+          title: "Trip Link Copied!",
+          description: "Share this link with your travel partners.",
+          type: "success",
+        });
         setTimeout(() => setCopied(false), 2500);
       }
     } catch {
@@ -221,6 +238,17 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
               </button>
               <button
                 type="button"
+                onClick={() => setActiveTab("budget")}
+                className={`rounded-full px-5 py-2 text-xs font-medium transition-all duration-300 ${
+                  activeTab === "budget"
+                    ? "bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.25)]"
+                    : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                💰 Trip Budget & Cost
+              </button>
+              <button
+                type="button"
                 onClick={() => setActiveTab("tips")}
                 className={`rounded-full px-5 py-2 text-xs font-medium transition-all duration-300 ${
                   activeTab === "tips"
@@ -375,6 +403,17 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                   </div>
                 </Reveal>
               ))}
+            </div>
+          )}
+
+          {/* TRIP BUDGET CALCULATOR TAB */}
+          {activeTab === "budget" && (
+            <div className="animate-fade-in">
+              <TripBudgetCalculator
+                initialDestinationSlug={destination.slug}
+                initialDays={durationDays}
+                initialTravelers={2}
+              />
             </div>
           )}
 

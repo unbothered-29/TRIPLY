@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { destinations } from "@/data/destinations";
 import Reveal from "@/components/ui/Reveal";
+import { openQuickView } from "@/components/DestinationQuickViewModal";
 
 export default function PopularDestinations() {
   const featuredDestination = destinations[0];
@@ -57,11 +60,23 @@ export default function PopularDestinations() {
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
 
-              {/* Badge */}
-              <div className="absolute top-6 left-6">
+              {/* Badge & Quick View */}
+              <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20">
                 <span className="rounded-full border border-white/20 bg-black/60 px-3.5 py-1 text-xs uppercase tracking-wider text-white/90 backdrop-blur-md">
                   Featured
                 </span>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openQuickView(featuredDestination.slug);
+                  }}
+                  className="rounded-full border border-white/25 bg-black/60 px-3.5 py-1 text-xs text-white backdrop-blur-md transition-all duration-300 hover:border-white hover:bg-white hover:text-black active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.5)]"
+                >
+                  ✦ Quick View
+                </button>
               </div>
 
               {/* Content */}
@@ -103,6 +118,21 @@ export default function PopularDestinations() {
                     sizes="(max-width: 640px) 100vw, 25vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                   />
+
+                  {/* Top Quick View button */}
+                  <div className="absolute top-4 right-4 z-20">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openQuickView(destination.slug);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] text-white backdrop-blur-md hover:border-white hover:bg-white hover:text-black active:scale-95"
+                    >
+                      ✦ Quick View
+                    </button>
+                  </div>
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
 

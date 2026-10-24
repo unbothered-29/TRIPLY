@@ -7,6 +7,7 @@ import {
   getSavedSnapshot,
   getSavedServerSnapshot,
 } from "@/lib/savedStorage";
+import { showToast } from "@/components/ui/Toast";
 
 interface SaveButtonProps {
   slug?: string;
@@ -24,7 +25,12 @@ export default function SaveButton({ slug, className }: SaveButtonProps) {
 
   const handleToggle = () => {
     if (slug) {
-      toggleSaved(slug);
+      const next = toggleSaved(slug);
+      showToast({
+        title: next ? "Saved to your favorites!" : "Removed from favorites",
+        description: next ? "Accessible anytime from the saved dock in the navigation bar." : undefined,
+        type: next ? "success" : "neutral",
+      });
     }
   };
 

@@ -4,6 +4,7 @@ import SaveButton from "@/components/SaveButton";
 
 type DestinationHeroProps = {
   destination: {
+    slug: string;
     name: string;
     country: string;
     tagline: string;

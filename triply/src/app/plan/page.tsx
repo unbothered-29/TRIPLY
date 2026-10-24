@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { destinations } from "@/data/destinations";
 import Reveal from "@/components/ui/Reveal";
+import TripBudgetCalculator from "@/components/TripBudgetCalculator";
 
 function PlanForm() {
   const router = useRouter();
@@ -14,6 +15,7 @@ function PlanForm() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
+  const [showBudgetEstimator, setShowBudgetEstimator] = useState(false);
 
   const interestOptions = [
     "Nature",
@@ -157,6 +159,43 @@ function PlanForm() {
           })}
         </div>
       </div>
+
+      {/* Optional Budget & Cost Estimator Preview */}
+      {destination && (
+        <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 sm:p-8 backdrop-blur-xl transition-all duration-300 hover:border-white/20">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+                04 / Budget Preview (Optional)
+              </p>
+              <p className="text-xs text-white/60 mt-1">
+                Estimate lodging, dining, and daily costs for{" "}
+                <span className="text-white font-medium">
+                  {destinations.find((d) => d.slug === destination)?.name}
+                </span>
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowBudgetEstimator((prev) => !prev)}
+              className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs text-white/80 transition-all hover:bg-white hover:text-black hover:border-white active:scale-95"
+            >
+              {showBudgetEstimator ? "Hide Estimator ▴" : "💰 Calculate Budget ▾"}
+            </button>
+          </div>
+
+          {showBudgetEstimator && (
+            <div className="mt-6 pt-6 border-t border-white/10 animate-fade-in">
+              <TripBudgetCalculator
+                initialDestinationSlug={destination}
+                initialDays={5}
+                compact={true}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Submit */}
       <div className="border-t border-white/10 pt-8">

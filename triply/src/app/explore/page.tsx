@@ -6,6 +6,7 @@ import { useState } from "react";
 import { destinations } from "@/data/destinations";
 import Reveal from "@/components/ui/Reveal";
 import ExploreMap from "@/components/ExploreMap";
+import { openQuickView } from "@/components/DestinationQuickViewModal";
 
 export default function ExplorePage() {
   const [search, setSearch] = useState("");
@@ -221,8 +222,20 @@ export default function ExplorePage() {
                         {/* Bottom gradient */}
                         <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                        {/* Top Badge */}
-                        <div className="absolute top-5 right-5">
+                        {/* Top Badges & Quick View */}
+                        <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              openQuickView(destination.slug);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] text-white backdrop-blur-md hover:bg-white hover:text-black hover:border-white active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.5)]"
+                          >
+                            ✦ Quick View
+                          </button>
+
                           <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-wider text-white/70 backdrop-blur-md">
                             {destination.category}
                           </span>

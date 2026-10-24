@@ -91,7 +91,7 @@ export default function Globe({
       type?: string;
       geometry: {
         type: string;
-        coordinates: number[][][] | number[][][][];
+        coordinates: any;
       };
       [key: string]: unknown;
     }
@@ -108,9 +108,9 @@ export default function Globe({
       const geometry = feature.geometry;
 
       if (geometry.type === "Polygon") {
-        const coordinates = geometry.coordinates;
+        const coordinates = geometry.coordinates as number[][][];
 
-        if (!pointInPolygon(point, coordinates[0])) {
+        if (!coordinates?.[0] || !pointInPolygon(point, coordinates[0])) {
           return false;
         }
 
@@ -124,8 +124,11 @@ export default function Globe({
       }
 
       if (geometry.type === "MultiPolygon") {
-        for (const polygon of geometry.coordinates) {
-          if (!pointInPolygon(point, polygon[0])) {
+        const multiCoords = geometry.coordinates as number[][][][];
+        if (!Array.isArray(multiCoords)) return false;
+
+        for (const polygon of multiCoords) {
+          if (!polygon?.[0] || !pointInPolygon(point, polygon[0])) {
             continue;
           }
 
@@ -153,7 +156,7 @@ export default function Globe({
     ) => {
       const dots: [number, number][] = [];
 
-      const bounds = d3.geoBounds(feature);
+      const bounds = d3.geoBounds(feature as any);
 
       const [
         [minLng, minLat],
@@ -341,7 +344,7 @@ export default function Globe({
     /*
      * Automatic rotation only
      */
-    const rotation = [0, 0];
+    const rotation: [number, number, number] = [0, 0, 0];
 
     const rotationSpeed = 0.35;
 
