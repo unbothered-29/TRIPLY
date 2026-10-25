@@ -19,12 +19,19 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [savedDrawerOpen, setSavedDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const savedSlugs = useSyncExternalStore(
     subscribeSaved,
     getSavedSnapshot,
     getSavedServerSnapshot
   );
+
+  const activeSavedSlugs = mounted ? savedSlugs : [];
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const savedDropdownRef = useRef<HTMLDivElement>(null);
@@ -95,6 +102,7 @@ export default function Navbar() {
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "Explore", href: "/explore" },
+    { label: "My Trips", href: "/trips", badgeCount: activeSavedSlugs.length },
     { label: "Plan", href: "/plan" },
     { label: "About", href: "/about" },
   ];
@@ -112,7 +120,7 @@ export default function Navbar() {
     : destinations.slice(0, 4);
 
   const savedDestinationsList = destinations.filter((dest) =>
-    savedSlugs.includes(dest.slug)
+    activeSavedSlugs.includes(dest.slug)
   );
 
   return (
@@ -162,13 +170,18 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300 lg:text-sm ${
+                    className={`relative inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300 lg:text-sm ${
                       isActive
                         ? "bg-white/15 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
                         : "text-white/60 hover:bg-white/[0.06] hover:text-white"
                     }`}
                   >
-                    {link.label}
+                    <span>{link.label}</span>
+                    {typeof link.badgeCount === "number" && link.badgeCount > 0 && (
+                      <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[9px] font-bold text-black shadow-[0_0_8px_#10b981]">
+                        {link.badgeCount}
+                      </span>
+                    )}
                     {isActive && (
                       <span className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-white shadow-[0_0_8px_white]" />
                     )}
@@ -217,7 +230,7 @@ export default function Navbar() {
                     setSearchOpen(false);
                   }}
                   className={`group relative flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs transition-all duration-300 active:scale-95 ${
-                    savedDrawerOpen || savedSlugs.length > 0
+                    savedDrawerOpen || activeSavedSlugs.length > 0
                       ? "border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20"
                       : "border-white/10 bg-white/[0.04] text-white/70 hover:border-white/30 hover:bg-white/[0.09] hover:text-white"
                   }`}
@@ -226,17 +239,17 @@ export default function Navbar() {
                 >
                   <span
                     className={`text-sm transition-transform duration-300 ${
-                      savedSlugs.length > 0
+                      activeSavedSlugs.length > 0
                         ? "text-rose-400 group-hover:scale-110"
                         : "text-white/50 group-hover:text-white"
                     }`}
                   >
-                    {savedSlugs.length > 0 ? "♥" : "♡"}
+                    {activeSavedSlugs.length > 0 ? "♥" : "♡"}
                   </span>
                   <span className="hidden sm:inline text-xs font-medium">Saved</span>
-                  {savedSlugs.length > 0 && (
+                  {activeSavedSlugs.length > 0 && (
                     <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white">
-                      {savedSlugs.length}
+                      {activeSavedSlugs.length}
                     </span>
                   )}
                 </button>
@@ -334,6 +347,21 @@ export default function Navbar() {
                           </Link>
                         </div>
                       )}
+                    </div>
+
+                    {/* Popover Footer: Go to Full Travel Hub */}
+                    <div className="mt-3 border-t border-white/10 pt-3">
+                      <Link
+                        href="/trips"
+                        onClick={() => setSavedDrawerOpen(false)}
+                        className="flex items-center justify-between w-full rounded-xl bg-white px-3.5 py-2.5 text-xs font-semibold text-black transition-all hover:bg-white/90 active:scale-95 shadow-[0_4px_15px_rgba(255,255,255,0.2)]"
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <span>🗺️</span>
+                          <span>Open Full Travel Hub & Route Map</span>
+                        </span>
+                        <span>→</span>
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -435,7 +463,14 @@ export default function Navbar() {
                           : "text-white/70 hover:bg-white/[0.06] hover:text-white"
                       }`}
                     >
-                      <span>{link.label}</span>
+                      <span className="flex items-center gap-2">
+                        <span>{link.label}</span>
+                        {typeof link.badgeCount === "number" && link.badgeCount > 0 && (
+                          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[9px] font-bold text-black">
+                            {link.badgeCount}
+                          </span>
+                        )}
+                      </span>
                       {isActive && <span className="text-xs text-white/60">●</span>}
                     </Link>
                   );

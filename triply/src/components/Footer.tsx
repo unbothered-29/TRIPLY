@@ -69,6 +69,13 @@ export default function Footer() {
                   </Link>
 
                   <Link
+                    href="/trips"
+                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                  >
+                    My Trips & Bucket List
+                  </Link>
+
+                  <Link
                     href="/about"
                     className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
                   >

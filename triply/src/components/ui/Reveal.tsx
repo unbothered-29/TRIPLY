@@ -19,14 +19,17 @@ export default function Reveal({
   duration = 700,
   threshold = 0.1,
 }: RevealProps) {
-  const [isVisible, setIsVisible] = useState(
-    () => typeof IntersectionObserver === "undefined"
-  );
+  const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element || typeof IntersectionObserver === "undefined") return;
+    if (!element) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setIsVisible(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
