@@ -1,4 +1,4 @@
-# Triply
+# Triply.
 
 Triply is a travel discovery and trip-planning web app built with Next.js. Explore curated destinations from around the world, dive into detailed guides for each one, and sketch out a trip plan based on your dates and interests.
 
