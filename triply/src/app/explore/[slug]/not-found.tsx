@@ -3,7 +3,7 @@ export default function NotFound(){
         <main className="flex min-h-[70vh] items-center justify-center px-6">
             <section className="text-center">
                 <p className="text-sm uppercase tracking-[0.3em] text-gray-400">
-                    40
+                    404
                 </p>
                 <h1 className="mt-4 text-5xl font-light tracking-tight">
                    ❌ Destination not found.
