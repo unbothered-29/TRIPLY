@@ -11,6 +11,7 @@ import {
   getSavedSnapshot,
   getSavedServerSnapshot,
 } from "@/lib/savedStorage";
+import { useIsMounted } from "@/lib/useIsMounted";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -19,11 +20,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [savedDrawerOpen, setSavedDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsMounted();
 
   const savedSlugs = useSyncExternalStore(
     subscribeSaved,

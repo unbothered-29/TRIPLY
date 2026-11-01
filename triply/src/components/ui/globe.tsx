@@ -91,7 +91,7 @@ export default function Globe({
       type?: string;
       geometry: {
         type: string;
-        coordinates: any;
+        coordinates: unknown;
       };
       [key: string]: unknown;
     }
@@ -156,7 +156,7 @@ export default function Globe({
     ) => {
       const dots: [number, number][] = [];
 
-      const bounds = d3.geoBounds(feature as any);
+      const bounds = d3.geoBounds(feature as unknown as d3.GeoGeometryObjects);
 
       const [
         [minLng, minLat],

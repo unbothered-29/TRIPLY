@@ -8,6 +8,7 @@ import Reveal from "@/components/ui/Reveal";
 import TripBudgetCalculator from "@/components/TripBudgetCalculator";
 import SmartPackingChecklist from "@/components/SmartPackingChecklist";
 import { showToast } from "@/components/ui/Toast";
+import { useIsMounted } from "@/lib/useIsMounted";
 
 interface ItineraryViewProps {
   itinerary: GeneratedItinerary;
@@ -16,7 +17,7 @@ interface ItineraryViewProps {
 export default function ItineraryView({ itinerary }: ItineraryViewProps) {
   const { destination, days: initialDays, durationDays, dateRangeText, interests, travelTips } = itinerary;
 
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const [days, setDays] = useState<DaySchedule[]>(initialDays);
   const [selectedDay, setSelectedDay] = useState<number | "all">("all");
   const [completedActivities, setCompletedActivities] = useState<Record<string, boolean>>({});
@@ -37,19 +38,22 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
 
   // Hydration-safe initial loading from localStorage
   useEffect(() => {
-    setMounted(true);
-    try {
-      const savedCustom = localStorage.getItem(customItineraryKey);
-      if (savedCustom) {
-        setDays(JSON.parse(savedCustom));
+    const timer = setTimeout(() => {
+      try {
+        const savedCustom = localStorage.getItem(customItineraryKey);
+        if (savedCustom) {
+          setDays(JSON.parse(savedCustom));
+        }
+        const savedCompleted = localStorage.getItem(completedStorageKey);
+        if (savedCompleted) {
+          setCompletedActivities(JSON.parse(savedCompleted));
+        }
+      } catch {
+        // ignore
       }
-      const savedCompleted = localStorage.getItem(completedStorageKey);
-      if (savedCompleted) {
-        setCompletedActivities(JSON.parse(savedCompleted));
-      }
-    } catch {
-      // ignore
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [customItineraryKey, completedStorageKey]);
 
   const toggleActivity = (key: string) => {
@@ -532,7 +536,11 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                             </label>
                             <select
                               value={newPeriod}
-                              onChange={(e) => setNewPeriod(e.target.value as any)}
+                              onChange={(e) =>
+                                setNewPeriod(
+                                  e.target.value as "Morning" | "Afternoon" | "Evening"
+                                )
+                              }
                               className="w-full rounded-xl border border-white/15 bg-neutral-900 px-3 py-2 text-xs text-white outline-none"
                             >
                               <option value="Morning">Morning</option>
@@ -547,7 +555,11 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                             </label>
                             <select
                               value={newCategory}
-                              onChange={(e) => setNewCategory(e.target.value as any)}
+                              onChange={(e) =>
+                                setNewCategory(
+                                  e.target.value as ActivitySlot["category"]
+                                )
+                              }
                               className="w-full rounded-xl border border-white/15 bg-neutral-900 px-3 py-2 text-xs text-white outline-none"
                             >
                               <option value="Sightseeing">Sightseeing</option>

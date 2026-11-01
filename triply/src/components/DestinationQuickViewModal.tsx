@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { destinations } from "@/data/destinations";
-import { isSaved, toggleSaved, subscribeSaved, getSavedSnapshot, getSavedServerSnapshot } from "@/lib/savedStorage";
+import { isSaved, toggleSaved } from "@/lib/savedStorage";
 import { showToast } from "@/components/ui/Toast";
 import TripBudgetCalculator from "@/components/TripBudgetCalculator";
 
-type Destination = (typeof destinations)[number];
 
 export const QUICKVIEW_EVENT = "triply-open-quickview";
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { useSyncExternalStore, useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import {
   toggleSaved,
   subscribeSaved,
   getSavedSnapshot,
   getSavedServerSnapshot,
 } from "@/lib/savedStorage";
+import { useIsMounted } from "@/lib/useIsMounted";
 import { showToast } from "@/components/ui/Toast";
 
 interface SaveButtonProps {
@@ -15,11 +16,7 @@ interface SaveButtonProps {
 }
 
 export default function SaveButton({ slug, className }: SaveButtonProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsMounted();
 
   const savedSlugs = useSyncExternalStore(
     subscribeSaved,

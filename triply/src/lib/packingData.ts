@@ -36,7 +36,8 @@ export function getSmartPackingItems(
   destinationSlug: string,
   temperatureStr: string
 ): Record<"documents" | "clothing" | "gear" | "health", PackingItem[]> {
-  const tempNumber = parseInt(temperatureStr) || 15;
+  const parsed = parseInt(temperatureStr, 10);
+  const tempNumber = Number.isNaN(parsed) ? 15 : parsed;
   const isCold = tempNumber <= 10;
   const isTropical = tempNumber >= 20;
 

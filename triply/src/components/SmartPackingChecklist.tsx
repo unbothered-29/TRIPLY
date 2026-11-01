@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSmartPackingItems, PackingItem } from "@/lib/packingData";
 import { showToast } from "@/components/ui/Toast";
+import { useIsMounted } from "@/lib/useIsMounted";
 
 interface SmartPackingChecklistProps {
   destinationSlug: string;
@@ -15,7 +16,7 @@ export default function SmartPackingChecklist({
   destinationName,
   temperature,
 }: SmartPackingChecklistProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const [activeCategory, setActiveCategory] = useState<"all" | "documents" | "clothing" | "gear" | "health">("all");
   const [packedItems, setPackedItems] = useState<Record<string, boolean>>({});
   const [customItems, setCustomItems] = useState<PackingItem[]>([]);
@@ -29,19 +30,22 @@ export default function SmartPackingChecklist({
 
   // Load from localStorage after mount
   useEffect(() => {
-    setMounted(true);
-    try {
-      const savedChecks = localStorage.getItem(storageKey);
-      if (savedChecks) {
-        setPackedItems(JSON.parse(savedChecks));
+    const timer = setTimeout(() => {
+      try {
+        const savedChecks = localStorage.getItem(storageKey);
+        if (savedChecks) {
+          setPackedItems(JSON.parse(savedChecks));
+        }
+        const savedCustom = localStorage.getItem(customItemsKey);
+        if (savedCustom) {
+          setCustomItems(JSON.parse(savedCustom));
+        }
+      } catch {
+        // ignore
       }
-      const savedCustom = localStorage.getItem(customItemsKey);
-      if (savedCustom) {
-        setCustomItems(JSON.parse(savedCustom));
-      }
-    } catch {
-      // ignore
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [storageKey, customItemsKey]);
 
   // Combine built-in items with user custom items
@@ -250,7 +254,11 @@ export default function SmartPackingChecklist({
 
         <select
           value={newItemCategory}
-          onChange={(e) => setNewItemCategory(e.target.value as any)}
+          onChange={(e) =>
+            setNewItemCategory(
+              e.target.value as "documents" | "clothing" | "gear" | "health"
+            )
+          }
           className="rounded-2xl border border-white/15 bg-neutral-900 px-3 py-2.5 text-xs text-white outline-none"
         >
           <option value="clothing">👕 Clothing</option>

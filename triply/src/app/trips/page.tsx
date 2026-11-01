@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { destinations } from "@/data/destinations";
 import {
-  getSavedTrips,
   getSavedTripsSnapshot,
   getSavedTripsServerSnapshot,
   subscribeSaved,
@@ -13,7 +12,6 @@ import {
   removeSaved,
   saveTripItem,
   clearAllSavedTrips,
-  SavedTripItem,
   TripPriority,
 } from "@/lib/savedStorage";
 import {
@@ -23,8 +21,8 @@ import {
   TravelStyle,
 } from "@/lib/budgetData";
 import BucketListRouteMap from "@/components/BucketListRouteMap";
-import Reveal from "@/components/ui/Reveal";
 import { showToast } from "@/components/ui/Toast";
+import { useIsMounted } from "@/lib/useIsMounted";
 
 // Curated starter journeys for inspiration
 const CURATED_JOURNEYS = [
@@ -55,15 +53,11 @@ const CURATED_JOURNEYS = [
 ];
 
 export default function TripsPage() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const [currencyCode, setCurrencyCode] = useState("USD");
   const [globalStyle, setGlobalStyle] = useState<TravelStyle>("comfort");
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [filterPriority, setFilterPriority] = useState<"all" | TripPriority>("all");
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const rawSavedTrips = useSyncExternalStore(
     subscribeSaved,

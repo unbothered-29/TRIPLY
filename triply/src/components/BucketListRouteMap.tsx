@@ -120,7 +120,7 @@ export default function BucketListRouteMap({
                   Est. Air Distance
                 </span>
                 <span className="font-medium text-emerald-300">
-                  ~{totalApproxKm.toLocaleString()} km
+                  ~{totalApproxKm.toLocaleString()} km (~{approxFlightHours}h flight)
                 </span>
               </div>
             )}
