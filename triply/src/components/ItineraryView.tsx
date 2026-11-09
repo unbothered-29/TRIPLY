@@ -7,8 +7,10 @@ import { GeneratedItinerary, ActivitySlot, DaySchedule } from "@/lib/itineraryGe
 import Reveal from "@/components/ui/Reveal";
 import TripBudgetCalculator from "@/components/TripBudgetCalculator";
 import SmartPackingChecklist from "@/components/SmartPackingChecklist";
+import ExportItineraryModal from "@/components/ExportItineraryModal";
 import { showToast } from "@/components/ui/Toast";
 import { useIsMounted } from "@/lib/useIsMounted";
+import { downloadIcsFile } from "@/lib/itineraryExporter";
 
 interface ItineraryViewProps {
   itinerary: GeneratedItinerary;
@@ -22,6 +24,7 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
   const [selectedDay, setSelectedDay] = useState<number | "all">("all");
   const [completedActivities, setCompletedActivities] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"itinerary" | "packing" | "budget" | "tips">("itinerary");
 
   // State for Add Activity inline modal / form
@@ -229,23 +232,51 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
             </Link>
 
             {/* Actions Cluster */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={handleShare}
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs text-white/80 backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white hover:text-black active:scale-95"
+                onClick={() => setExportModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white px-4 py-2 text-xs font-semibold text-black shadow-[0_0_20px_rgba(255,255,255,0.25)] transition-all duration-300 hover:bg-neutral-200 active:scale-95"
               >
-                <span>🔗</span>
-                <span>{copied ? "Link Copied!" : "Share Trip"}</span>
+                <span>📤</span>
+                <span>Export Itinerary</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  downloadIcsFile(itinerary, days);
+                  showToast({
+                    title: "Calendar File (.ics) Downloaded!",
+                    description: "Importing to Apple/Google/Outlook calendar.",
+                    type: "success",
+                  });
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2 text-xs text-white/80 backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white hover:text-black active:scale-95"
+                title="Download .ics file for your calendar"
+              >
+                <span>📅</span>
+                <span className="hidden sm:inline">Add to Calendar</span>
               </button>
 
               <button
                 type="button"
                 onClick={handlePrint}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white px-4 py-2 text-xs font-semibold text-black shadow-[0_0_20px_rgba(255,255,255,0.25)] transition-all duration-300 hover:bg-neutral-200 active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2 text-xs text-white/80 backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white hover:text-black active:scale-95"
+                title="Print or Save as PDF Booklet"
               >
                 <span>🖨️</span>
-                <span>Export / Print Booklet</span>
+                <span className="hidden sm:inline">Print / PDF</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleShare}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2 text-xs text-white/80 backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white hover:text-black active:scale-95"
+                title="Share Trip Link"
+              >
+                <span>🔗</span>
+                <span>{copied ? "Copied!" : "Share"}</span>
               </button>
             </div>
           </div>
@@ -778,6 +809,51 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
               </div>
             </div>
           )}
+          {/* Bottom Export & Next Steps Banner */}
+          <div className="print:hidden mt-16 rounded-[2rem] border border-white/15 bg-gradient-to-r from-neutral-900/90 via-neutral-950/90 to-neutral-900/90 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-[10px] text-emerald-400">
+                  ✦
+                </span>
+                <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-white/50">
+                  Ready to Journey?
+                </p>
+              </div>
+              <h3 className="mt-1 text-2xl font-light text-white">
+                Export your {destination.name} Plan
+              </h3>
+              <p className="mt-1 text-xs text-white/50 max-w-md">
+                Save as a printable PDF booklet, sync to your calendar (.ics), or copy a text summary to take offline on your travels.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+              <button
+                type="button"
+                onClick={() => setExportModalOpen(true)}
+                className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3 text-xs font-semibold text-black shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all hover:bg-neutral-200 active:scale-95"
+              >
+                <span>📤</span>
+                <span>Export Options</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  downloadIcsFile(itinerary, days);
+                  showToast({
+                    title: "Calendar File (.ics) Downloaded!",
+                    description: "Importing to your calendar.",
+                    type: "success",
+                  });
+                }}
+                className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[0.04] px-5 py-3 text-xs font-medium text-white transition-all hover:border-white/30 hover:bg-white/10 active:scale-95"
+              >
+                <span>📅</span>
+                <span>.ICS Calendar</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -791,6 +867,15 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
           Created with TRIPLY • Travel begins with curiosity.
         </p>
       </div>
+
+      {/* Export Modal Dialog */}
+      <ExportItineraryModal
+        isOpen={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        itinerary={itinerary}
+        currentDays={days}
+        onTriggerPrint={handlePrint}
+      />
     </div>
   );
 }

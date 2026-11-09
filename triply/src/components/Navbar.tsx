@@ -123,7 +123,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out ${
+        className={`print:hidden fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out ${
           isScrolled ? "py-2.5 sm:py-3.5" : "py-4 sm:py-6"
         }`}
       >

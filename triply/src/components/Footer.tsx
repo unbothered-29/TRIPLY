@@ -3,7 +3,7 @@ import Reveal from "@/components/ui/Reveal";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[radial-gradient(circle_at_50%_0%,#202020_0%,#101010_40%,#050505_100%)] text-white overflow-hidden">
+    <footer className="print:hidden border-t border-white/10 bg-[radial-gradient(circle_at_50%_0%,#202020_0%,#101010_40%,#050505_100%)] text-white overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 py-24 md:px-12 lg:px-24">
         <Reveal>
           <div className="grid gap-16 md:grid-cols-[1.5fr_1fr]">

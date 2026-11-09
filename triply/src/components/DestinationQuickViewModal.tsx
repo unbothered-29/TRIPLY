@@ -89,7 +89,7 @@ export default function DestinationQuickViewModal() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-destination-title"
-      className="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6 md:p-10 animate-fade-in"
+      className="print:hidden fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6 md:p-10 animate-fade-in"
     >
       {/* Blurred Backdrop */}
       <div
