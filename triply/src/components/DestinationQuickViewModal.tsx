@@ -7,6 +7,7 @@ import { destinations } from "@/data/destinations";
 import { isSaved, toggleSaved } from "@/lib/savedStorage";
 import { showToast } from "@/components/ui/Toast";
 import TripBudgetCalculator from "@/components/TripBudgetCalculator";
+import { getCategoryTheme, getClimateBadge } from "@/lib/uiColors";
 
 
 export const QUICKVIEW_EVENT = "triply-open-quickview";
@@ -67,6 +68,9 @@ export default function DestinationQuickViewModal() {
   const destination = destinations.find((d) => d.slug === activeSlug);
   if (!destination) return null;
 
+  const theme = getCategoryTheme(destination.category);
+  const climate = getClimateBadge(destination.temperature);
+
   const allImages = [
     { url: destination.image, label: `${destination.name} Panorama` },
     ...destination.places.map((p) => ({ url: p.image, label: p.name })),
@@ -124,8 +128,8 @@ export default function DestinationQuickViewModal() {
           <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[10px] uppercase tracking-widest text-emerald-300 backdrop-blur-md">
-                  {destination.category}
+                <span className={`rounded-full border px-3 py-1 text-[10px] uppercase tracking-widest backdrop-blur-md font-medium ${theme.badge}`}>
+                  {theme.icon} {destination.category}
                 </span>
                 <span className="text-xs uppercase tracking-[0.2em] text-white/70">
                   {destination.country}
@@ -138,13 +142,13 @@ export default function DestinationQuickViewModal() {
 
             {/* Rating & Weather */}
             <div className="flex items-center gap-2.5">
-              <div className="rounded-2xl border border-white/15 bg-black/60 px-4 py-2 backdrop-blur-md text-center">
-                <span className="text-xs text-amber-300">★ {destination.rating}</span>
-                <p className="text-[9px] uppercase tracking-wider text-white/50">Rating</p>
+              <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 backdrop-blur-md text-center shadow-sm">
+                <span className="text-xs font-semibold text-amber-300">★ {destination.rating}</span>
+                <p className="text-[9px] uppercase tracking-wider text-amber-300/70">Rating</p>
               </div>
-              <div className="rounded-2xl border border-white/15 bg-black/60 px-4 py-2 backdrop-blur-md text-center">
-                <span className="text-xs text-sky-300 font-mono">{destination.temperature}</span>
-                <p className="text-[9px] uppercase tracking-wider text-white/50">Temp</p>
+              <div className={`rounded-2xl border px-4 py-2 backdrop-blur-md text-center ${climate.badge}`}>
+                <span className="text-xs font-mono font-medium">{climate.icon} {destination.temperature}</span>
+                <p className="text-[9px] uppercase tracking-wider opacity-70">Climate</p>
               </div>
             </div>
           </div>
@@ -270,7 +274,7 @@ export default function DestinationQuickViewModal() {
               <Link
                 href={`/plan/${destination.slug}`}
                 onClick={() => setActiveSlug(null)}
-                className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-xs font-medium text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] transition hover:bg-neutral-200 active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 px-6 py-2.5 text-xs font-semibold text-black shadow-[0_0_20px_rgba(52,211,153,0.35)] transition-all hover:opacity-95 active:scale-95"
               >
                 <span>Plan Trip Now</span>
                 <span>→</span>

@@ -118,8 +118,8 @@ export default function Footer() {
               href="/"
               className="group flex items-center gap-3 transition-transform duration-300 hover:scale-102"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]">
-                <span className="text-sm transition-transform duration-300 group-hover:rotate-45">✦</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-400/30 bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-sky-500/15 shadow-[0_0_15px_rgba(52,211,153,0.25)] transition-all duration-300 group-hover:border-emerald-300 group-hover:shadow-[0_0_20px_rgba(52,211,153,0.45)]">
+                <span className="text-sm font-semibold bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent transition-transform duration-300 group-hover:rotate-45">✦</span>
               </div>
 
               <span className="text-xl font-medium tracking-tight">

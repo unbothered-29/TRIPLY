@@ -141,11 +141,11 @@ export default function Navbar() {
               href="/"
               className="group flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 active:scale-95"
             >
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-gradient-to-br from-white/20 via-white/10 to-transparent shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] backdrop-blur-md transition-all duration-300 group-hover:border-white/60 group-hover:bg-white group-hover:text-black group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-                <span className="text-sm font-semibold transition-transform duration-500 group-hover:rotate-45">
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-full border border-emerald-400/30 bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-sky-500/15 shadow-[0_0_15px_rgba(52,211,153,0.25)] backdrop-blur-md transition-all duration-300 group-hover:border-emerald-300 group-hover:shadow-[0_0_20px_rgba(52,211,153,0.45)]">
+                <span className="text-sm font-semibold bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent transition-transform duration-500 group-hover:rotate-45">
                   ✦
                 </span>
-                <span className="absolute -inset-0.5 -z-10 rounded-full bg-gradient-to-r from-amber-400/20 to-teal-400/20 opacity-0 blur-sm transition-opacity duration-300 group-hover:opacity-100" />
+                <span className="absolute -inset-0.5 -z-10 rounded-full bg-gradient-to-r from-emerald-400/30 via-teal-400/30 to-sky-400/30 opacity-70 blur-sm transition-opacity duration-300 group-hover:opacity-100" />
               </div>
 
               <div className="flex flex-col">

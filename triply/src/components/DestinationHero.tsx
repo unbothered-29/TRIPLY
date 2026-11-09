@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import SaveButton from "@/components/SaveButton";
+import { getCategoryTheme, getClimateBadge } from "@/lib/uiColors";
 
 type DestinationHeroProps = {
   destination: {
@@ -19,6 +20,9 @@ type DestinationHeroProps = {
 export default function DestinationHero({
   destination,
 }: DestinationHeroProps) {
+  const theme = getCategoryTheme(destination.category);
+  const climate = getClimateBadge(destination.temperature);
+
   return (
     <section className="px-4 pb-12 pt-28 md:px-8 md:pb-16 md:pt-32 lg:px-16 overflow-hidden">
       <div className="mx-auto max-w-7xl">
@@ -95,26 +99,26 @@ export default function DestinationHero({
                   style={{ animationDelay: "560ms" }}
                 >
                   {/* Rating */}
-                  <div className="flex items-center gap-3 rounded-full border border-white/15 bg-black/30 px-5 py-3 backdrop-blur-xl transition-colors hover:border-white/30">
-                    <span className="text-sm text-amber-300">★</span>
+                  <div className="flex items-center gap-3 rounded-full border border-amber-400/25 bg-amber-500/10 px-5 py-3 backdrop-blur-xl shadow-sm">
+                    <span className="text-base text-amber-400">★</span>
                     <div>
-                      <p className="text-[9px] uppercase tracking-[0.25em] text-white/40">
+                      <p className="text-[9px] uppercase tracking-[0.25em] text-amber-300/70">
                         Rating
                       </p>
-                      <p className="mt-0.5 text-sm font-medium text-white/90">
-                        {destination.rating}
+                      <p className="mt-0.5 text-sm font-semibold text-amber-200">
+                        {destination.rating} <span className="text-xs font-normal text-amber-300/60">/ 5.0</span>
                       </p>
                     </div>
                   </div>
 
                   {/* Temperature */}
-                  <div className="flex items-center gap-3 rounded-full border border-white/15 bg-black/30 px-5 py-3 backdrop-blur-xl transition-colors hover:border-white/30">
-                    <span className="text-sm text-sky-300">°</span>
+                  <div className={`flex items-center gap-3 rounded-full border px-5 py-3 backdrop-blur-xl ${climate.badge}`}>
+                    <span className="text-base">{climate.icon}</span>
                     <div>
-                      <p className="text-[9px] uppercase tracking-[0.25em] text-white/40">
-                        Temperature
+                      <p className="text-[9px] uppercase tracking-[0.25em] opacity-70">
+                        Climate
                       </p>
-                      <p className="mt-0.5 text-sm font-medium text-white/90">
+                      <p className="mt-0.5 text-sm font-semibold">
                         {destination.temperature}
                       </p>
                     </div>
@@ -126,7 +130,7 @@ export default function DestinationHero({
                   {/* Plan your trip */}
                   <Link
                     href={`/plan/${destination.slug}`}
-                    className="group/plan flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-medium text-black shadow-[0_0_20px_rgba(255,255,255,0.25)] transition-all duration-300 hover:bg-neutral-100 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
+                    className="group/plan flex items-center gap-3 rounded-full bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 px-7 py-3 text-sm font-semibold text-black shadow-[0_0_25px_rgba(52,211,153,0.35)] transition-all duration-300 hover:opacity-95 hover:shadow-[0_0_35px_rgba(52,211,153,0.5)] active:scale-95"
                   >
                     <span>Plan this trip</span>
                     <span className="transition-transform duration-300 group-hover/plan:translate-x-1">
@@ -139,9 +143,9 @@ export default function DestinationHero({
 
             {/* Explore badge */}
             <div className="absolute right-7 top-7 hidden md:block animate-fade-in">
-              <div className="flex items-center gap-3 rounded-full border border-white/15 bg-black/40 px-4 py-2 backdrop-blur-xl">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[9px] uppercase tracking-[0.3em] text-white/60">
+              <div className={`flex items-center gap-2.5 rounded-full border px-4 py-2 backdrop-blur-xl ${theme.badge}`}>
+                <span>{theme.icon}</span>
+                <span className="text-xs uppercase tracking-[0.25em] font-semibold">
                   {destination.category || "Explore"}
                 </span>
               </div>

@@ -4,18 +4,27 @@ const features = [
   {
     number: "01",
     title: "Discover",
+    icon: "🧭",
+    accent: "text-emerald-400",
+    badge: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
     description:
       "Find inspiring destinations and discover places worth adding to your next adventure.",
   },
   {
     number: "02",
     title: "Plan",
+    icon: "📅",
+    accent: "text-sky-400",
+    badge: "border-sky-500/30 bg-sky-500/10 text-sky-300",
     description:
       "Explore destinations and gather ideas to help you build the perfect trip.",
   },
   {
     number: "03",
     title: "Remember",
+    icon: "✨",
+    accent: "text-amber-400",
+    badge: "border-amber-500/30 bg-amber-500/10 text-amber-300",
     description:
       "Keep your favorite destinations in one place so you can come back to them later.",
   },
@@ -25,7 +34,8 @@ export default function Features() {
   return (
     <section className="relative border-t border-white/10 bg-black px-6 py-28 text-white md:px-12 lg:px-24 overflow-hidden">
       {/* Background glow */}
-      <div className="pointer-events-none absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-white/[0.015] blur-3xl" />
+      <div className="pointer-events-none absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-emerald-500/[0.04] blur-3xl animate-aurora" />
+      <div className="pointer-events-none absolute -right-40 top-0 h-80 w-80 rounded-full bg-sky-500/[0.04] blur-3xl animate-aurora delay-300" />
 
       <div className="mx-auto max-w-7xl">
         {/* Header */}
@@ -63,11 +73,16 @@ export default function Features() {
               >
                 {/* Number & Arrow */}
                 <div className="flex items-start justify-between">
-                  <span className="text-sm font-mono text-white/30 transition-colors duration-300 group-hover:text-white/80">
-                    {feature.number}
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <span className={`flex h-8 w-8 items-center justify-center rounded-xl border text-sm backdrop-blur-md ${feature.badge}`}>
+                      {feature.icon}
+                    </span>
+                    <span className="text-sm font-mono text-white/30 transition-colors duration-300 group-hover:text-white/80">
+                      {feature.number}
+                    </span>
+                  </div>
 
-                  <span className="text-xl text-white/20 transition-all duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 group-hover:text-white">
+                  <span className={`text-xl text-white/20 transition-all duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 group-hover:${feature.accent}`}>
                     ↗
                   </span>
                 </div>

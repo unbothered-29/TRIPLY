@@ -7,6 +7,7 @@ import { destinations } from "@/data/destinations";
 import Reveal from "@/components/ui/Reveal";
 import ExploreMap from "@/components/ExploreMap";
 import { openQuickView } from "@/components/DestinationQuickViewModal";
+import { getCategoryTheme, getClimateBadge } from "@/lib/uiColors";
 
 export default function ExplorePage() {
   const [search, setSearch] = useState("");
@@ -123,23 +124,24 @@ export default function ExplorePage() {
             {/* Category Filter Pills */}
             <div className="flex flex-wrap items-center gap-2">
               {[
-                "All",
-                "Nature",
-                "Mountains",
-                "Cities",
-                "Coastal",
-              ].map((filter) => (
+                { label: "All", icon: "✦", activeClass: "border-white bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] font-semibold" },
+                { label: "Nature", icon: "🌿", activeClass: "border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.35)] font-semibold" },
+                { label: "Mountains", icon: "🏔️", activeClass: "border-cyan-400 bg-cyan-500/20 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.35)] font-semibold" },
+                { label: "Cities", icon: "🌆", activeClass: "border-violet-400 bg-violet-500/20 text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.35)] font-semibold" },
+                { label: "Coastal", icon: "🌊", activeClass: "border-sky-400 bg-sky-500/20 text-sky-300 shadow-[0_0_20px_rgba(14,165,233,0.35)] font-semibold" },
+              ].map((item) => (
                 <button
-                  key={filter}
+                  key={item.label}
                   type="button"
-                  onClick={() => setCategory(filter)}
-                  className={`rounded-full border px-4 py-2 text-xs transition-all duration-300 active:scale-95 ${
-                    category === filter
-                      ? "border-white bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] font-medium"
-                      : "border-white/10 bg-white/[0.02] text-white/40 hover:border-white/30 hover:bg-white/[0.05] hover:text-white"
+                  onClick={() => setCategory(item.label)}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs transition-all duration-300 active:scale-95 ${
+                    category === item.label
+                      ? item.activeClass
+                      : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/30 hover:bg-white/[0.06] hover:text-white"
                   }`}
                 >
-                  {filter}
+                  <span>{item.icon}</span>
+                  <span>{item.label}</span>
                 </button>
               ))}
             </div>
@@ -200,80 +202,95 @@ export default function ExplorePage() {
             viewMode === "grid" ? (
               /* GRID VIEW */
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredDestinations.map((destination, index) => (
-                  <Reveal key={destination.slug} delay={(index % 6) * 80}>
-                    <Link
-                      href={`/explore/${destination.slug}`}
-                      className="group block"
-                    >
-                      <article className="relative h-[450px] overflow-hidden rounded-3xl border border-white/10 transition-all duration-500 hover:-translate-y-2 hover:border-white/25 hover:shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
-                        {/* Image */}
-                        <Image
-                          src={destination.image}
-                          alt={destination.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                        />
+                {filteredDestinations.map((destination, index) => {
+                  const theme = getCategoryTheme(destination.category);
+                  const climate = getClimateBadge(destination.temperature);
 
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-black/35 transition-colors duration-500 group-hover:bg-black/55" />
+                  return (
+                    <Reveal key={destination.slug} delay={(index % 6) * 80}>
+                      <Link
+                        href={`/explore/${destination.slug}`}
+                        className="group block"
+                      >
+                        <article className="relative h-[450px] overflow-hidden rounded-3xl border border-white/10 transition-all duration-500 hover:-translate-y-2 hover:border-white/30 hover:shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
+                          {/* Image */}
+                          <Image
+                            src={destination.image}
+                            alt={destination.name}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                          />
 
-                        {/* Bottom gradient */}
-                        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                          {/* Overlay */}
+                          <div className="absolute inset-0 bg-black/35 transition-colors duration-500 group-hover:bg-black/55" />
 
-                        {/* Top Badges & Quick View */}
-                        <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              openQuickView(destination.slug);
-                            }}
-                            className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] text-white backdrop-blur-md hover:bg-white hover:text-black hover:border-white active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.5)]"
-                          >
-                            ✦ Quick View
-                          </button>
+                          {/* Bottom gradient */}
+                          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
 
-                          <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-wider text-white/70 backdrop-blur-md">
-                            {destination.category}
-                          </span>
-                        </div>
+                          {/* Top Badges & Quick View */}
+                          <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20">
+                            <span className={`rounded-full border px-3 py-1 text-[10px] uppercase tracking-wider backdrop-blur-md font-medium ${theme.badge}`}>
+                              {theme.icon} {destination.category}
+                            </span>
 
-                        {/* Card content */}
-                        <div className="absolute inset-0 flex flex-col justify-end p-7 text-white md:p-8">
-                          <div className="translate-y-2 transition-transform duration-500 group-hover:translate-y-0">
-                            <p className="text-[10px] uppercase tracking-[0.3em] text-white/50">
-                              {destination.country}
-                            </p>
-
-                            <h2 className="mt-3 text-4xl font-light tracking-tight">
-                              {destination.name}
-                            </h2>
-
-                            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/60">
-                              {destination.tagline}
-                            </p>
-
-                            <div className="mt-6 flex items-center justify-between">
-                              <span className="text-[10px] uppercase tracking-[0.25em] text-white/35">
-                                {destination.temperature}
+                            <div className="flex items-center gap-2">
+                              <span className="rounded-full border border-amber-400/30 bg-black/60 px-2.5 py-1 text-[11px] font-semibold text-amber-300 backdrop-blur-md">
+                                ★ {destination.rating}
                               </span>
-
-                              <span className="text-sm text-white/60 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white">
-                                Explore →
-                              </span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  openQuickView(destination.slug);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] text-white backdrop-blur-md hover:bg-white hover:text-black hover:border-white active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.5)]"
+                              >
+                                ✦ Quick View
+                              </button>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Hover border glow */}
-                        <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/0 transition-colors duration-500 group-hover:border-white/20" />
-                      </article>
-                    </Link>
-                  </Reveal>
-                ))}
+                          {/* Card content */}
+                          <div className="absolute inset-0 flex flex-col justify-end p-7 text-white md:p-8">
+                            <div className="translate-y-2 transition-transform duration-500 group-hover:translate-y-0">
+                              <div className="flex items-center justify-between">
+                                <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-white/50">
+                                  {destination.country}
+                                </p>
+                                <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] backdrop-blur-md ${climate.badge}`}>
+                                  <span>{climate.icon}</span> <span>{destination.temperature}</span>
+                                </span>
+                              </div>
+
+                              <h2 className="mt-2 text-3xl md:text-4xl font-light tracking-tight">
+                                {destination.name}
+                              </h2>
+
+                              <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-white/60 line-clamp-2">
+                                {destination.tagline}
+                              </p>
+
+                              <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-3">
+                                <span className={`text-xs font-medium ${theme.text}`}>
+                                  {destination.category}
+                                </span>
+
+                                <span className="text-sm text-white/70 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white font-medium">
+                                  Explore Guide →
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Hover border glow */}
+                          <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/0 transition-colors duration-500 group-hover:border-white/20" />
+                        </article>
+                      </Link>
+                    </Reveal>
+                  );
+                })}
               </div>
             ) : (
               /* MAP VIEW */

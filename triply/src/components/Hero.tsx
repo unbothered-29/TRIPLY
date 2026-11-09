@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { destinations } from "@/data/destinations";
+import { getCategoryTheme, getClimateBadge } from "@/lib/uiColors";
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({
@@ -46,8 +47,9 @@ export default function Hero() {
       }}
     >
       {/* Ambient background glows */}
-      <div className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full bg-emerald-500/[0.04] blur-[140px] animate-aurora" />
-      <div className="pointer-events-none absolute -right-32 top-1/3 h-[500px] w-[500px] rounded-full bg-sky-500/[0.035] blur-[140px] animate-aurora delay-300" />
+      <div className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full bg-emerald-500/[0.07] blur-[140px] animate-aurora" />
+      <div className="pointer-events-none absolute -right-32 top-1/4 h-[550px] w-[550px] rounded-full bg-sky-500/[0.06] blur-[140px] animate-aurora delay-300" />
+      <div className="pointer-events-none absolute right-1/4 -bottom-32 h-[500px] w-[500px] rounded-full bg-amber-500/[0.05] blur-[150px] animate-aurora delay-500" />
 
       {/* Background world map */}
       <div className="pointer-events-none absolute inset-0 transition-opacity duration-1000 ease-out">
@@ -91,6 +93,8 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 z-20">
         {destinations.map((destination) => {
           const isActive = activeDestination === destination.slug;
+          const theme = getCategoryTheme(destination.category);
+          const climate = getClimateBadge(destination.temperature);
 
           return (
             <div
@@ -110,18 +114,25 @@ export default function Hero() {
                 className="relative block h-4 w-4 group/pin"
                 aria-label={`Explore ${destination.name}`}
               >
-                <span className={`absolute -inset-2 rounded-full bg-white/20 blur-sm transition-all duration-300 ${isActive ? "scale-125 bg-sky-400/30" : "animate-pulse"}`} />
-                <span className={`relative block h-3 w-3 rounded-full border border-white transition-all duration-300 ${
-                  isActive
-                    ? "bg-white shadow-[0_0_25px_rgba(255,255,255,1)] scale-110"
-                    : "bg-white/80 shadow-[0_0_12px_rgba(255,255,255,0.6)] group-hover/pin:scale-125"
-                }`} />
+                <span
+                  className={`absolute -inset-2.5 rounded-full blur-sm transition-all duration-300 ${
+                    isActive ? "scale-125 opacity-80" : "opacity-40 animate-pulse"
+                  }`}
+                  style={{ backgroundColor: theme.glow }}
+                />
+                <span
+                  className={`relative block h-3 w-3 rounded-full border border-white transition-all duration-300 ${
+                    isActive
+                      ? "scale-125 shadow-[0_0_20px_rgba(255,255,255,1)]"
+                      : "group-hover/pin:scale-125 shadow-[0_0_10px_rgba(255,255,255,0.7)]"
+                  } ${theme.dot}`}
+                />
               </Link>
 
               {/* Destination preview card when active */}
               {isActive && (
                 <div className="absolute left-6 top-1/2 -translate-y-1/2 z-40 animate-fade-in">
-                  <div className="w-64 overflow-hidden rounded-2xl border border-white/20 bg-neutral-950/95 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300">
+                  <div className="w-68 overflow-hidden rounded-2xl border border-white/20 bg-neutral-950/95 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all duration-300">
                     <div className="relative h-28 w-full overflow-hidden">
                       <Image
                         src={destination.image}
@@ -131,24 +142,30 @@ export default function Hero() {
                         className="object-cover transition-transform duration-700 hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/30 to-transparent" />
-                      <span className="absolute top-2.5 right-2.5 rounded-full border border-white/20 bg-black/60 px-2 py-0.5 text-[9px] uppercase tracking-wider text-white/80 backdrop-blur-md">
-                        {destination.category}
+                      <span className={`absolute top-2.5 right-2.5 rounded-full border px-2.5 py-0.5 text-[9px] uppercase tracking-wider backdrop-blur-md font-medium ${theme.badge}`}>
+                        {theme.icon} {destination.category}
                       </span>
                     </div>
 
                     <div className="p-3.5">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-                        {destination.country}
-                      </p>
-                      <h3 className="mt-0.5 text-base font-light text-white">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                          {destination.country}
+                        </p>
+                        <span className="text-[11px] font-semibold text-amber-400">
+                          ★ {destination.rating}
+                        </span>
+                      </div>
+                      <h3 className="mt-0.5 text-base font-medium text-white">
                         {destination.name}
                       </h3>
                       <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/50">
                         {destination.tagline}
                       </p>
                       <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2.5">
-                        <span className="text-[10px] text-white/40">
-                          {destination.temperature}
+                        <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] ${climate.badge}`}>
+                          <span>{climate.icon}</span>
+                          <span>{destination.temperature}</span>
                         </span>
                         <Link
                           href={`/explore/${destination.slug}`}
@@ -190,7 +207,7 @@ export default function Hero() {
           >
             Explore the world.
             <br />
-            <span className="bg-gradient-to-r from-white via-white/80 to-white/40 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent">
               Plan your adventure.
             </span>
           </h1>
