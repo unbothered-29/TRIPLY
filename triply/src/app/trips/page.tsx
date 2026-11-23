@@ -23,6 +23,7 @@ import {
 import BucketListRouteMap from "@/components/BucketListRouteMap";
 import { showToast } from "@/components/ui/Toast";
 import { useIsMounted } from "@/lib/useIsMounted";
+import { getCategoryBadgeStyle, getClimateBadgeStyle } from "@/lib/uiColors";
 
 // Curated starter journeys for inspiration
 const CURATED_JOURNEYS = [
@@ -500,31 +501,41 @@ Planned on Triply (Travel Begins with Curiosity)`;
                 </p>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  {CURATED_JOURNEYS.map((cj) => (
-                    <div
-                      key={cj.title}
-                      className="group relative flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06]"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl">{cj.icon}</span>
-                          <h4 className="text-lg font-medium text-white">{cj.title}</h4>
-                        </div>
-                        <p className="mt-2 text-xs text-white/50">{cj.tagline}</p>
-                        <p className="mt-3 text-[11px] text-emerald-400">
-                          Includes: {cj.slugs.join(", ")}
-                        </p>
-                      </div>
+                  {CURATED_JOURNEYS.map((cj, idx) => {
+                    const themeGlows = [
+                      "hover:border-sky-400/40 hover:shadow-[0_0_25px_rgba(56,189,248,0.15)]",
+                      "hover:border-emerald-400/40 hover:shadow-[0_0_25px_rgba(52,211,153,0.15)]",
+                      "hover:border-teal-400/40 hover:shadow-[0_0_25px_rgba(45,212,191,0.15)]",
+                      "hover:border-amber-400/40 hover:shadow-[0_0_25px_rgba(251,191,36,0.15)]",
+                    ];
+                    const glow = themeGlows[idx % themeGlows.length];
 
-                      <button
-                        type="button"
-                        onClick={() => handleAddCuratedJourney(cj.slugs, cj.title)}
-                        className="mt-5 w-fit rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium text-white transition-all hover:border-white hover:bg-white hover:text-black active:scale-95"
+                    return (
+                      <div
+                        key={cj.title}
+                        className={`group relative flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:bg-white/[0.06] ${glow}`}
                       >
-                        + Add To My Bucket List
-                      </button>
-                    </div>
-                  ))}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl">{cj.icon}</span>
+                            <h4 className="text-lg font-medium text-white">{cj.title}</h4>
+                          </div>
+                          <p className="mt-2 text-xs text-white/50">{cj.tagline}</p>
+                          <p className="mt-3 text-[11px] text-emerald-400">
+                            Includes: {cj.slugs.join(", ")}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAddCuratedJourney(cj.slugs, cj.title)}
+                          className="mt-5 w-fit rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium text-white transition-all hover:border-emerald-400/60 hover:bg-emerald-400/20 hover:text-emerald-200 active:scale-95"
+                        >
+                          + Add To My Bucket List
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -532,6 +543,8 @@ Planned on Triply (Travel Begins with Curiosity)`;
             <div className="mt-8 space-y-6">
               {filteredTrips.map((item, index) => {
                 const isSelected = selectedSlug === item.slug;
+                const catStyle = getCategoryBadgeStyle(item.dest.category);
+                const climateStyle = getClimateBadgeStyle(item.dest.temperature);
 
                 return (
                   <div
@@ -557,21 +570,27 @@ Planned on Triply (Travel Begins with Curiosity)`;
 
                         {/* Order & Priority Badge */}
                         <div className="absolute left-3 top-3 flex items-center gap-2">
-                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/70 border border-white/20 text-xs font-bold text-white backdrop-blur-md">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/80 border border-white/20 text-xs font-bold text-white backdrop-blur-md">
                             #{index + 1}
                           </span>
-                          <span className="rounded-full border border-white/20 bg-black/60 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-white/80 backdrop-blur-md">
-                            {item.dest.category}
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] uppercase tracking-wider backdrop-blur-md font-medium shadow-sm ${catStyle.bg} ${catStyle.border} ${catStyle.text} ${catStyle.glow}`}
+                          >
+                            <span>{catStyle.icon}</span>
+                            <span>{item.dest.category}</span>
                           </span>
                         </div>
 
                         {/* Rating & Weather */}
-                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white">
-                          <span className="flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 backdrop-blur-md">
+                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/25 bg-black/75 px-2.5 py-1 text-xs font-medium text-amber-300 backdrop-blur-md shadow-[0_0_12px_rgba(251,191,36,0.15)]">
                             <span className="text-amber-400">★</span> {item.dest.rating}
                           </span>
-                          <span className="rounded-full bg-black/60 px-2.5 py-1 backdrop-blur-md text-sky-300">
-                            🌡️ {item.dest.temperature}
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur-md ${climateStyle.border} ${climateStyle.text} ${climateStyle.bg}`}
+                          >
+                            <span>{climateStyle.icon}</span>
+                            <span>{item.dest.temperature}</span>
                           </span>
                         </div>
                       </div>
@@ -595,9 +614,9 @@ Planned on Triply (Travel Begins with Curiosity)`;
                             <div className="flex items-center gap-1 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
                               {(
                                 [
-                                  { id: "must-visit", label: "🔥 Must" },
-                                  { id: "planned", label: "🎒 Booked" },
-                                  { id: "dream", label: "✨ Dream" },
+                                  { id: "must-visit", label: "🔥 Must", activeBg: "bg-amber-400 text-black font-semibold shadow-[0_0_12px_rgba(251,191,36,0.3)]" },
+                                  { id: "planned", label: "🎒 Booked", activeBg: "bg-emerald-400 text-black font-semibold shadow-[0_0_12px_rgba(52,211,153,0.3)]" },
+                                  { id: "dream", label: "✨ Dream", activeBg: "bg-sky-400 text-black font-semibold shadow-[0_0_12px_rgba(56,189,248,0.3)]" },
                                 ] as const
                               ).map((p) => {
                                 const active = (item.priority || "dream") === p.id;
@@ -608,7 +627,7 @@ Planned on Triply (Travel Begins with Curiosity)`;
                                     onClick={() => handlePriorityChange(item.slug, p.id)}
                                     className={`rounded-xl px-2.5 py-1 text-[11px] transition-all ${
                                       active
-                                        ? "bg-white text-black font-semibold shadow-sm"
+                                        ? p.activeBg
                                         : "text-white/50 hover:text-white"
                                     }`}
                                   >
@@ -731,7 +750,7 @@ Planned on Triply (Travel Begins with Curiosity)`;
                           <div className="flex flex-wrap items-center gap-2">
                             <Link
                               href={`/plan/${item.slug}`}
-                              className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-black transition-all hover:bg-white/90 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                              className="rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 px-4 py-2 text-xs font-semibold text-black transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(52,211,153,0.3)]"
                             >
                               Build Itinerary →
                             </Link>

@@ -8,18 +8,24 @@ const principles = [
     title: "Discover",
     description:
       "Travel starts with curiosity. Triply helps you discover destinations, places, and experiences that spark your next idea.",
+    color: "group-hover:text-emerald-400",
+    barColor: "group-hover:bg-emerald-400",
   },
   {
     number: "02",
     title: "Plan",
     description:
       "Turn inspiration into a journey. Explore destinations, collect ideas, and shape them into your next adventure.",
+    color: "group-hover:text-sky-400",
+    barColor: "group-hover:bg-sky-400",
   },
   {
     number: "03",
     title: "Remember",
     description:
       "The places that stay with us are often the ones we never want to forget. Keep your favorite destinations close.",
+    color: "group-hover:text-amber-400",
+    barColor: "group-hover:bg-amber-400",
   },
 ];
 
@@ -149,11 +155,11 @@ export default function AboutPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-white/30 transition-colors group-hover:text-white/60">
+                    <span className={`text-xs font-mono text-white/30 transition-colors ${principle.color}`}>
                       {principle.number}
                     </span>
 
-                    <span className="text-white/20 transition-all duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 group-hover:text-white">
+                    <span className={`text-white/20 transition-all duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 ${principle.color}`}>
                       ↗
                     </span>
                   </div>
@@ -166,7 +172,7 @@ export default function AboutPage() {
                     {principle.description}
                   </p>
 
-                  <div className="mt-10 h-px w-8 bg-white/20 transition-all duration-500 group-hover:w-16 group-hover:bg-white/70" />
+                  <div className={`mt-10 h-px w-8 bg-white/20 transition-all duration-500 group-hover:w-16 ${principle.barColor}`} />
                 </article>
               </Reveal>
             ))}
@@ -187,7 +193,7 @@ export default function AboutPage() {
                 <h2 className="mt-6 max-w-3xl text-4xl font-light leading-tight tracking-tight md:text-6xl">
                   Somewhere out there,
                   <br />
-                  <span className="bg-gradient-to-r from-white via-white/80 to-white/35 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent font-normal">
                     is your next destination.
                   </span>
                 </h2>

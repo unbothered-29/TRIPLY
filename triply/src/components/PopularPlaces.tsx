@@ -25,7 +25,10 @@ export default function PopularPlaces({ places }: PopularPlacesProps) {
               </div>
 
               <h2 className="mt-7 text-5xl font-light tracking-[-0.04em] md:text-6xl">
-                Popular places
+                Popular{" "}
+                <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent font-normal">
+                  places
+                </span>
               </h2>
 
               <p className="mt-5 max-w-lg text-sm font-light leading-relaxed text-white/50 md:text-base">
@@ -54,7 +57,7 @@ export default function PopularPlaces({ places }: PopularPlacesProps) {
                 {/* Text */}
                 <div>
                   <div className="flex items-center gap-3">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white/20 transition-colors duration-300 group-hover:bg-white" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-white/20 transition-all duration-300 group-hover:bg-emerald-400 group-hover:shadow-[0_0_8px_#34d399]" />
                     <p className="text-[9px] uppercase tracking-[0.3em] text-white/30">
                       Place to visit
                     </p>
@@ -70,7 +73,7 @@ export default function PopularPlaces({ places }: PopularPlacesProps) {
                 </div>
 
                 {/* Mini travel card */}
-                <div className="relative h-36 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:border-white/30 group-hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
+                <div className="relative h-36 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:border-emerald-400/40 group-hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
                   <Image
                     src={place.image}
                     alt={place.name}
@@ -94,7 +97,7 @@ export default function PopularPlaces({ places }: PopularPlacesProps) {
 
                 {/* Arrow Button */}
                 <div className="flex items-center md:justify-end">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/40 transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-black group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/40 transition-all duration-300 group-hover:border-emerald-400/50 group-hover:bg-emerald-400/10 group-hover:text-emerald-300 group-hover:shadow-[0_0_20px_rgba(52,211,153,0.3)]">
                     <span className="transition-transform duration-300 group-hover:translate-x-0.5">
                       →
                     </span>

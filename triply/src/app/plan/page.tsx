@@ -139,21 +139,27 @@ function PlanForm() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          {interestOptions.map((interest) => {
-            const selected = interests.includes(interest);
+          {[
+            { id: "Nature", icon: "🌲", active: "border-emerald-400/60 bg-emerald-500/15 text-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.25)] font-medium" },
+            { id: "Food", icon: "🍜", active: "border-amber-400/60 bg-amber-500/15 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.25)] font-medium" },
+            { id: "Culture", icon: "🏛️", active: "border-purple-400/60 bg-purple-500/15 text-purple-300 shadow-[0_0_18px_rgba(168,85,247,0.25)] font-medium" },
+            { id: "Adventure", icon: "🧗", active: "border-sky-400/60 bg-sky-500/15 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.25)] font-medium" },
+          ].map((item) => {
+            const selected = interests.includes(item.id);
 
             return (
               <button
-                key={interest}
+                key={item.id}
                 type="button"
-                onClick={() => toggleInterest(interest)}
-                className={`rounded-full border px-6 py-3 text-sm transition-all duration-300 active:scale-95 ${
+                onClick={() => toggleInterest(item.id)}
+                className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm transition-all duration-300 active:scale-95 ${
                   selected
-                    ? "border-white bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] font-medium"
+                    ? item.active
                     : "border-white/10 bg-white/[0.03] text-white/50 hover:border-white/30 hover:bg-white/[0.06] hover:text-white"
                 }`}
               >
-                {interest}
+                <span>{item.icon}</span>
+                <span>{item.id}</span>
               </button>
             );
           })}
@@ -201,10 +207,10 @@ function PlanForm() {
       <div className="border-t border-white/10 pt-8">
         <button
           type="submit"
-          className="group relative flex items-center gap-4 overflow-hidden rounded-full bg-white px-8 py-4 text-sm font-medium text-black shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all duration-300 hover:bg-neutral-100 hover:shadow-[0_0_35px_rgba(255,255,255,0.5)] active:scale-95"
+          className="group relative flex items-center gap-4 overflow-hidden rounded-full bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-300 px-8 py-4 text-sm font-semibold text-black shadow-[0_0_30px_rgba(52,211,153,0.35)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_40px_rgba(52,211,153,0.55)] active:scale-95"
         >
           <span>Generate tailored itinerary</span>
-          <span className="transition-transform duration-300 group-hover:translate-x-1.5">
+          <span className="transition-transform duration-300 group-hover:translate-x-1.5 font-bold">
             →
           </span>
         </button>
