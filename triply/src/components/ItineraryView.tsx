@@ -11,6 +11,7 @@ import ExportItineraryModal from "@/components/ExportItineraryModal";
 import { showToast } from "@/components/ui/Toast";
 import { useIsMounted } from "@/lib/useIsMounted";
 import { downloadIcsFile } from "@/lib/itineraryExporter";
+import { getCategoryTheme } from "@/lib/uiColors";
 
 interface ItineraryViewProps {
   itinerary: GeneratedItinerary;
@@ -35,6 +36,15 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
   const [newTime, setNewTime] = useState("09:30 - 11:30");
   const [newCategory, setNewCategory] = useState<ActivitySlot["category"]>("Sightseeing");
   const [newLocation, setNewLocation] = useState("");
+
+  // Drag and Drop & Inline Editing state
+  const [draggingItem, setDraggingItem] = useState<{ dayNumber: number; slotIndex: number } | null>(null);
+  const [dragOverTarget, setDragOverTarget] = useState<{ dayNumber: number; slotIndex: number } | null>(null);
+  const [editingItem, setEditingItem] = useState<{
+    dayNumber: number;
+    slotIndex: number;
+    slot: ActivitySlot;
+  } | null>(null);
 
   const customItineraryKey = `triply_custom_itinerary_${destination.slug}`;
   const completedStorageKey = `triply_completed_acts_${destination.slug}`;
@@ -157,6 +167,229 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
         description: "Restored default day-by-day plan.",
         type: "neutral",
       });
+    }
+  };
+
+  // Drag and Drop handlers
+  const handleDragStart = (e: React.DragEvent, dayNumber: number, slotIndex: number) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", JSON.stringify({ dayNumber, slotIndex }));
+    setDraggingItem({ dayNumber, slotIndex });
+  };
+
+  const handleDragOver = (e: React.DragEvent, dayNumber: number, slotIndex: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (!dragOverTarget || dragOverTarget.dayNumber !== dayNumber || dragOverTarget.slotIndex !== slotIndex) {
+      setDragOverTarget({ dayNumber, slotIndex });
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggingItem(null);
+    setDragOverTarget(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetDayNumber: number, targetSlotIndex: number) => {
+    e.preventDefault();
+    if (!draggingItem) return;
+
+    const { dayNumber: sourceDayNumber, slotIndex: sourceSlotIndex } = draggingItem;
+    if (sourceDayNumber === targetDayNumber && sourceSlotIndex === targetSlotIndex) {
+      setDraggingItem(null);
+      setDragOverTarget(null);
+      return;
+    }
+
+    const updatedDays = days.map((d) => ({
+      ...d,
+      slots: [...d.slots],
+    }));
+
+    const sourceDay = updatedDays.find((d) => d.day === sourceDayNumber);
+    const targetDay = updatedDays.find((d) => d.day === targetDayNumber);
+
+    if (!sourceDay || !targetDay) return;
+
+    const [movedSlot] = sourceDay.slots.splice(sourceSlotIndex, 1);
+    if (!movedSlot) return;
+
+    targetDay.slots.splice(targetSlotIndex, 0, movedSlot);
+
+    setDays(updatedDays);
+    setDraggingItem(null);
+    setDragOverTarget(null);
+
+    try {
+      localStorage.setItem(customItineraryKey, JSON.stringify(updatedDays));
+      showToast({
+        title: "Activity Reordered",
+        description: `Moved "${movedSlot.title}" to position ${targetSlotIndex + 1} on Day ${targetDayNumber}.`,
+        type: "success",
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  // Up/Down reordering
+  const handleMoveSlot = (dayNumber: number, slotIndex: number, direction: "up" | "down") => {
+    const targetDay = days.find((d) => d.day === dayNumber);
+    if (!targetDay) return;
+
+    const targetIndex = direction === "up" ? slotIndex - 1 : slotIndex + 1;
+    if (targetIndex < 0 || targetIndex >= targetDay.slots.length) return;
+
+    const updatedDays = days.map((d) => {
+      if (d.day === dayNumber) {
+        const newSlots = [...d.slots];
+        const temp = newSlots[slotIndex];
+        newSlots[slotIndex] = newSlots[targetIndex];
+        newSlots[targetIndex] = temp;
+        return { ...d, slots: newSlots };
+      }
+      return d;
+    });
+
+    setDays(updatedDays);
+    try {
+      localStorage.setItem(customItineraryKey, JSON.stringify(updatedDays));
+      showToast({
+        title: "Activity Moved",
+        description: `Moved "${targetDay.slots[slotIndex].title}" ${direction}.`,
+        type: "info",
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  // Cross-day move
+  const handleMoveToDay = (currentDayNumber: number, slotIndex: number, newDayNumber: number) => {
+    if (currentDayNumber === newDayNumber) return;
+
+    const updatedDays = days.map((d) => ({ ...d, slots: [...d.slots] }));
+    const sourceDay = updatedDays.find((d) => d.day === currentDayNumber);
+    const targetDay = updatedDays.find((d) => d.day === newDayNumber);
+    if (!sourceDay || !targetDay) return;
+
+    const [movedSlot] = sourceDay.slots.splice(slotIndex, 1);
+    if (!movedSlot) return;
+
+    targetDay.slots.push(movedSlot);
+    setDays(updatedDays);
+    try {
+      localStorage.setItem(customItineraryKey, JSON.stringify(updatedDays));
+      showToast({
+        title: "Activity Shifted",
+        description: `Shifted "${movedSlot.title}" to Day ${newDayNumber}.`,
+        type: "success",
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  // Save activity edit
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem || !editingItem.slot.title.trim()) return;
+
+    const { dayNumber, slotIndex, slot } = editingItem;
+    const updatedDays = days.map((d) => {
+      if (d.day === dayNumber) {
+        const newSlots = [...d.slots];
+        newSlots[slotIndex] = { ...slot };
+        return { ...d, slots: newSlots };
+      }
+      return d;
+    });
+
+    setDays(updatedDays);
+    setEditingItem(null);
+    try {
+      localStorage.setItem(customItineraryKey, JSON.stringify(updatedDays));
+      showToast({
+        title: "Activity Updated",
+        description: `Saved changes to "${slot.title}".`,
+        type: "success",
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  // Extend / Remove day
+  const handleAddDay = () => {
+    const nextDayNum = days.length > 0 ? Math.max(...days.map((d) => d.day)) + 1 : 1;
+    const newDay: DaySchedule = {
+      day: nextDayNum,
+      dateLabel: `Day ${nextDayNum}`,
+      title: `Extended Exploration Day ${nextDayNum}`,
+      theme: "Personalized Adventure & Leisure",
+      slots: [
+        {
+          period: "Morning",
+          time: "09:30 - 12:00",
+          title: "Morning Neighborhood Exploration",
+          description: "Explore local markets, scenic viewpoints, or artisan boutiques at your own pace.",
+          category: "Leisure",
+        },
+        {
+          period: "Afternoon",
+          time: "14:00 - 17:00",
+          title: "Afternoon Discovery & Sightseeing",
+          description: "Visit iconic local sights, historic landmarks, or relax in a scenic park.",
+          category: "Sightseeing",
+        },
+        {
+          period: "Evening",
+          time: "19:00 - 21:30",
+          title: "Celebratory Dinner & Night Walk",
+          description: "Enjoy a memorable dining experience featuring authentic regional delicacies.",
+          category: "Food",
+        },
+      ],
+    };
+
+    const updated = [...days, newDay];
+    setDays(updated);
+    try {
+      localStorage.setItem(customItineraryKey, JSON.stringify(updated));
+      showToast({
+        title: `Day ${nextDayNum} Added!`,
+        description: "Your itinerary has been extended with a new customizable day.",
+        type: "success",
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleRemoveDay = (dayNumber: number) => {
+    if (days.length <= 1) {
+      showToast({
+        title: "Cannot Delete Only Day",
+        description: "Your itinerary must include at least one day.",
+        type: "neutral",
+      });
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete Day ${dayNumber} and all its activities?`)) return;
+
+    const updated = days.filter((d) => d.day !== dayNumber);
+    setDays(updated);
+    if (selectedDay === dayNumber) setSelectedDay("all");
+    try {
+      localStorage.setItem(customItineraryKey, JSON.stringify(updated));
+      showToast({
+        title: `Day ${dayNumber} Removed`,
+        description: "Itinerary schedule updated.",
+        type: "neutral",
+      });
+    } catch {
+      // ignore
     }
   };
 
@@ -504,10 +737,22 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                         <button
                           type="button"
                           onClick={() => setAddingDayNumber(daySchedule.day)}
-                          className="print:hidden rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-1.5 text-xs text-white transition hover:border-white hover:bg-white hover:text-black active:scale-95"
+                          className="print:hidden rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-1.5 text-xs text-white transition hover:border-emerald-400 hover:bg-emerald-400/10 hover:text-emerald-300 active:scale-95"
                         >
                           + Add Activity
                         </button>
+
+                        {days.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveDay(daySchedule.day)}
+                            className="print:hidden rounded-full border border-white/10 bg-white/[0.02] p-1.5 text-xs text-white/30 hover:border-red-400 hover:bg-red-500/10 hover:text-red-300 transition"
+                            title={`Delete Day ${daySchedule.day}`}
+                          >
+                            🗑️
+                          </button>
+                        )}
+
                         <span className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-[11px] text-white/60 print:border-gray-300 print:text-gray-700">
                           {daySchedule.slots.length} Activities
                         </span>
@@ -652,23 +897,43 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                       {daySchedule.slots.map((slot, sIdx) => {
                         const activityId = `day-${daySchedule.day}-slot-${sIdx}-${slot.title.slice(0, 10)}`;
                         const isDone = mounted && Boolean(completedActivities[activityId]);
+                        const isDragging = draggingItem?.dayNumber === daySchedule.day && draggingItem.slotIndex === sIdx;
+                        const isOverTarget = dragOverTarget?.dayNumber === daySchedule.day && dragOverTarget.slotIndex === sIdx;
+                        const slotTheme = getCategoryTheme(slot.category);
 
                         return (
                           <div
                             key={sIdx}
-                            className={`group relative flex flex-col md:flex-row gap-5 rounded-2xl border p-5 transition-all duration-300 ${
-                              isDone
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, daySchedule.day, sIdx)}
+                            onDragOver={(e) => handleDragOver(e, daySchedule.day, sIdx)}
+                            onDragEnd={handleDragEnd}
+                            onDrop={(e) => handleDrop(e, daySchedule.day, sIdx)}
+                            className={`group relative flex flex-col md:flex-row gap-4 sm:gap-5 rounded-2xl border p-4 sm:p-5 transition-all duration-300 ${
+                              isDragging
+                                ? "opacity-30 border-dashed border-emerald-400 scale-[0.98]"
+                                : isOverTarget
+                                ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_20px_rgba(52,211,153,0.3)] ring-1 ring-emerald-400"
+                                : isDone
                                 ? "border-emerald-500/30 bg-emerald-950/10 opacity-75 print:border-gray-300"
-                                : "border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] print:border-gray-200"
+                                : "border-white/10 bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04] print:border-gray-200"
                             }`}
                           >
+                            {/* Drag Grip Handle */}
+                            <div
+                              className="print:hidden hidden sm:flex cursor-grab active:cursor-grabbing self-center p-1 text-white/20 hover:text-white/70 transition select-none"
+                              title="Drag to reorder"
+                            >
+                              <span className="text-lg leading-none">⋮⋮</span>
+                            </div>
+
                             {/* Checkbox Button */}
                             <button
                               type="button"
                               onClick={() => toggleActivity(activityId)}
                               className={`print:hidden self-start flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-200 ${
                                 isDone
-                                  ? "border-emerald-400 bg-emerald-500 text-black shadow-[0_0_12px_rgba(52,211,153,0.5)]"
+                                  ? "border-emerald-400 bg-emerald-500 text-black shadow-[0_0_12px_rgba(52,211,153,0.5)] font-bold text-xs"
                                   : "border-white/20 text-transparent hover:border-white/50"
                               }`}
                               title={isDone ? "Mark as uncompleted" : "Mark as completed"}
@@ -701,8 +966,9 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                                     {slot.period} ({slot.time})
                                   </span>
                                   <span className="text-xs text-white/30 print:hidden">•</span>
-                                  <span className="text-xs text-emerald-400 font-medium print:text-gray-700">
-                                    {slot.category}
+                                  <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${slotTheme.badge}`}>
+                                    <span>{slotTheme.icon}</span>
+                                    <span>{slot.category}</span>
                                   </span>
                                   {slot.location && (
                                     <>
@@ -714,15 +980,79 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                                   )}
                                 </div>
 
-                                {/* Delete activity button */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveActivity(daySchedule.day, sIdx, slot.title)}
-                                  className="print:hidden opacity-0 group-hover:opacity-100 transition text-xs text-white/30 hover:text-red-400"
-                                  title="Remove activity"
-                                >
-                                  ✕ Remove
-                                </button>
+                                {/* Reorder & Action Controls */}
+                                <div className="print:hidden flex items-center gap-1 opacity-80 group-hover:opacity-100 transition">
+                                  {/* Move Up */}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMoveSlot(daySchedule.day, sIdx, "up")}
+                                    disabled={sIdx === 0}
+                                    className="flex h-6 w-6 items-center justify-center rounded-md border border-white/10 text-[10px] text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white/40"
+                                    title="Move earlier"
+                                  >
+                                    ▲
+                                  </button>
+
+                                  {/* Move Down */}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMoveSlot(daySchedule.day, sIdx, "down")}
+                                    disabled={sIdx === daySchedule.slots.length - 1}
+                                    className="flex h-6 w-6 items-center justify-center rounded-md border border-white/10 text-[10px] text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white/40"
+                                    title="Move later"
+                                  >
+                                    ▼
+                                  </button>
+
+                                  {/* Move to another day selector (if multiple days) */}
+                                  {days.length > 1 && (
+                                    <select
+                                      aria-label={`Move activity ${slot.title} to another day`}
+                                      value={daySchedule.day}
+                                      onChange={(e) =>
+                                        handleMoveToDay(
+                                          daySchedule.day,
+                                          sIdx,
+                                          parseInt(e.target.value, 10)
+                                        )
+                                      }
+                                      className="h-6 rounded-md border border-white/10 bg-neutral-900 px-1 text-[10px] text-white/60 hover:text-white outline-none cursor-pointer"
+                                      title="Move to another day"
+                                    >
+                                      {days.map((d) => (
+                                        <option key={d.day} value={d.day}>
+                                          Day {d.day}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  )}
+
+                                  {/* Edit Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setEditingItem({
+                                        dayNumber: daySchedule.day,
+                                        slotIndex: sIdx,
+                                        slot: { ...slot },
+                                      })
+                                    }
+                                    className="flex items-center gap-1 rounded-md border border-white/10 px-2 py-0.5 text-[10px] text-white/50 hover:bg-white/10 hover:text-white transition"
+                                    title="Edit activity"
+                                  >
+                                    ✎ Edit
+                                  </button>
+
+                                  {/* Delete activity button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveActivity(daySchedule.day, sIdx, slot.title)}
+                                    className="flex h-6 w-6 items-center justify-center rounded-md border border-white/10 text-[10px] text-white/40 hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-300 transition"
+                                    title="Remove activity"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
                               </div>
 
                               <h3
@@ -746,6 +1076,24 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
                   </div>
                 </Reveal>
               ))}
+
+              {/* Extend Itinerary: Add Day Button */}
+              <div className="print:hidden flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-dashed border-white/20 bg-white/[0.02] p-6 text-center sm:text-left hover:border-emerald-400/40 hover:bg-white/[0.03] transition-all">
+                <div>
+                  <h4 className="text-base font-medium text-white">Extend Your Journey</h4>
+                  <p className="text-xs text-white/50 mt-0.5">
+                    Add more days to your itinerary to explore hidden gems, extend stays, or plan day trips.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddDay}
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 px-6 py-3 text-xs font-semibold text-black shadow-[0_0_20px_rgba(52,211,153,0.3)] transition hover:brightness-110 active:scale-95"
+                >
+                  <span>+</span>
+                  <span>Add Day {days.length + 1}</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -867,6 +1215,174 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
           Created with TRIPLY • Travel begins with curiosity.
         </p>
       </div>
+
+      {/* Edit Activity Modal Dialog */}
+      {editingItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingItem(null);
+          }}
+        >
+          <div className="relative w-full max-w-lg rounded-3xl border border-white/20 bg-neutral-950 p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.9)] animate-scale-up">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+                  Day {editingItem.dayNumber} • Slot #{editingItem.slotIndex + 1}
+                </span>
+                <h3 className="text-xl font-light text-white">Edit Activity</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingItem(null)}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/50 hover:bg-white/10 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="mt-5 space-y-4">
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-white/40 block mb-1">
+                  Activity Title
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editingItem.slot.title}
+                  onChange={(e) =>
+                    setEditingItem({
+                      ...editingItem,
+                      slot: { ...editingItem.slot, title: e.target.value },
+                    })
+                  }
+                  className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-white/40 block mb-1">
+                    Time / Slot
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.slot.time}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        slot: { ...editingItem.slot, time: e.target.value },
+                      })
+                    }
+                    className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-white/40 block mb-1">
+                    Period
+                  </label>
+                  <select
+                    value={editingItem.slot.period}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        slot: {
+                          ...editingItem.slot,
+                          period: e.target.value as "Morning" | "Afternoon" | "Evening",
+                        },
+                      })
+                    }
+                    className="w-full rounded-xl border border-white/15 bg-neutral-900 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                  >
+                    <option value="Morning">Morning</option>
+                    <option value="Afternoon">Afternoon</option>
+                    <option value="Evening">Evening</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-white/40 block mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={editingItem.slot.category}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        slot: {
+                          ...editingItem.slot,
+                          category: e.target.value as ActivitySlot["category"],
+                        },
+                      })
+                    }
+                    className="w-full rounded-xl border border-white/15 bg-neutral-900 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                  >
+                    <option value="Sightseeing">Sightseeing</option>
+                    <option value="Food">Food & Dining</option>
+                    <option value="Nature">Nature & Outdoors</option>
+                    <option value="Culture">Culture & History</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Leisure">Leisure & Relaxation</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-white/40 block mb-1">
+                    Location (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.slot.location || ""}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        slot: { ...editingItem.slot, location: e.target.value },
+                      })
+                    }
+                    className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-white/40 block mb-1">
+                  Description & Notes
+                </label>
+                <textarea
+                  rows={3}
+                  value={editingItem.slot.description}
+                  onChange={(e) =>
+                    setEditingItem({
+                      ...editingItem,
+                      slot: { ...editingItem.slot, description: e.target.value },
+                    })
+                  }
+                  className="w-full resize-none rounded-xl border border-white/15 bg-white/5 p-3 text-xs text-white outline-none focus:border-emerald-400"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setEditingItem(null)}
+                  className="rounded-full border border-white/15 px-4 py-2 text-xs text-white/70 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 px-5 py-2 text-xs font-semibold text-black shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:brightness-110 active:scale-95"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Export Modal Dialog */}
       <ExportItineraryModal

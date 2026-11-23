@@ -23,7 +23,7 @@ import {
 import BucketListRouteMap from "@/components/BucketListRouteMap";
 import { showToast } from "@/components/ui/Toast";
 import { useIsMounted } from "@/lib/useIsMounted";
-import { getCategoryBadgeStyle, getClimateBadgeStyle } from "@/lib/uiColors";
+import { getCategoryTheme, getClimateBadge } from "@/lib/uiColors";
 
 // Curated starter journeys for inspiration
 const CURATED_JOURNEYS = [
@@ -543,8 +543,8 @@ Planned on Triply (Travel Begins with Curiosity)`;
             <div className="mt-8 space-y-6">
               {filteredTrips.map((item, index) => {
                 const isSelected = selectedSlug === item.slug;
-                const catStyle = getCategoryBadgeStyle(item.dest.category);
-                const climateStyle = getClimateBadgeStyle(item.dest.temperature);
+                const catTheme = getCategoryTheme(item.dest.category);
+                const climate = getClimateBadge(item.dest.temperature);
 
                 return (
                   <div
@@ -574,9 +574,9 @@ Planned on Triply (Travel Begins with Curiosity)`;
                             #{index + 1}
                           </span>
                           <span
-                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] uppercase tracking-wider backdrop-blur-md font-medium shadow-sm ${catStyle.bg} ${catStyle.border} ${catStyle.text} ${catStyle.glow}`}
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] uppercase tracking-wider backdrop-blur-md font-medium shadow-sm ${catTheme.badge}`}
                           >
-                            <span>{catStyle.icon}</span>
+                            <span>{catTheme.icon}</span>
                             <span>{item.dest.category}</span>
                           </span>
                         </div>
@@ -587,9 +587,9 @@ Planned on Triply (Travel Begins with Curiosity)`;
                             <span className="text-amber-400">★</span> {item.dest.rating}
                           </span>
                           <span
-                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur-md ${climateStyle.border} ${climateStyle.text} ${climateStyle.bg}`}
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur-md ${climate.badge}`}
                           >
-                            <span>{climateStyle.icon}</span>
+                            <span>{climate.icon}</span>
                             <span>{item.dest.temperature}</span>
                           </span>
                         </div>

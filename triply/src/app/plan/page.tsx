@@ -6,6 +6,13 @@ import { destinations } from "@/data/destinations";
 import Reveal from "@/components/ui/Reveal";
 import TripBudgetCalculator from "@/components/TripBudgetCalculator";
 
+const INTEREST_OPTIONS = [
+  { id: "Nature", icon: "🌲", active: "border-emerald-400/60 bg-emerald-500/15 text-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.25)] font-medium" },
+  { id: "Food", icon: "🍜", active: "border-amber-400/60 bg-amber-500/15 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.25)] font-medium" },
+  { id: "Culture", icon: "🏛️", active: "border-purple-400/60 bg-purple-500/15 text-purple-300 shadow-[0_0_18px_rgba(168,85,247,0.25)] font-medium" },
+  { id: "Adventure", icon: "🧗", active: "border-sky-400/60 bg-sky-500/15 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.25)] font-medium" },
+];
+
 function PlanForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -16,13 +23,6 @@ function PlanForm() {
   const [endDate, setEndDate] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [showBudgetEstimator, setShowBudgetEstimator] = useState(false);
-
-  const interestOptions = [
-    "Nature",
-    "Food",
-    "Culture",
-    "Adventure",
-  ];
 
   function toggleInterest(interest: string) {
     setInterests((current) =>
@@ -139,12 +139,7 @@ function PlanForm() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          {[
-            { id: "Nature", icon: "🌲", active: "border-emerald-400/60 bg-emerald-500/15 text-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.25)] font-medium" },
-            { id: "Food", icon: "🍜", active: "border-amber-400/60 bg-amber-500/15 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.25)] font-medium" },
-            { id: "Culture", icon: "🏛️", active: "border-purple-400/60 bg-purple-500/15 text-purple-300 shadow-[0_0_18px_rgba(168,85,247,0.25)] font-medium" },
-            { id: "Adventure", icon: "🧗", active: "border-sky-400/60 bg-sky-500/15 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.25)] font-medium" },
-          ].map((item) => {
+          {INTEREST_OPTIONS.map((item) => {
             const selected = interests.includes(item.id);
 
             return (
